@@ -1,0 +1,68 @@
+workspace(name = "patch-labs")
+
+RUST_VERSION = "2022-07-22"
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+# Configure Rust support
+http_archive(
+    name = "rules_rust",
+    sha256 = "7fb9b4fe1a6fb4341bdf7c623e619460ecc0f52d5061cc56abc750111fba8a87",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_rust/releases/download/0.7.0/rules_rust-v0.7.0.tar.gz",
+        "https://github.com/bazelbuild/rules_rust/releases/download/0.7.0/rules_rust-v0.7.0.tar.gz",
+    ],
+)
+
+load("@rules_rust//rust:repositories.bzl", "rules_rust_dependencies", "rust_register_toolchains")
+
+rules_rust_dependencies()
+
+rust_register_toolchains(
+    edition = "2021",
+    iso_date = RUST_VERSION,
+    version = "nightly",
+)
+
+load("@rules_rust//crate_universe:repositories.bzl", "crate_universe_dependencies")
+
+crate_universe_dependencies(rust_version = "nightly-{}".format(RUST_VERSION))
+
+load("@rules_rust//crate_universe:defs.bzl", "crate", "crates_repository")
+
+crates_repository(
+    name = "crates",
+    cargo_lockfile = "//:Cargo.Bazel.lock",
+    packages = {
+        "async-trait": crate.spec(
+            version = "0.1.51",
+        ),
+        "mockall": crate.spec(
+            version = "0.10.2",
+        ),
+        "tokio": crate.spec(
+            version = "1.12.0",
+        ),
+    },
+)
+
+load("@crates//:defs.bzl", "crate_repositories")
+
+crate_repositories()
+
+# Add hermetic C/C++ toolchain
+git_repository(
+    name = "bazel-zig-cc",
+    commit = "5240246cab83d23c7a6a7f6b6b95941124d4add1",
+    remote = "https://git.sr.ht/~motiejus/bazel-zig-cc",
+)
+
+register_toolchains(
+    "@zig_sdk//libc_aware/toolchain:linux_amd64_gnu.2.34",
+    "@zig_sdk//libc_aware/toolchain:linux_amd64_gnu.2.34",
+    "@zig_sdk//libc_aware/toolchain:x86_64-linux-musl",
+    "@zig_sdk//toolchain:darwin_amd64",
+    "@zig_sdk//toolchain:darwin_arm64",
+    "@zig_sdk//toolchain:windows_amd64",
+)
