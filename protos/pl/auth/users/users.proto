@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package pl.auth.users.v1;
+
+import "protos/pl/api/id.proto";
+
+// A user in the system.
+//
+// This is closely related to a "Git user", where we're only interested
+// in the name and email of them. PL supports the concept of an "unregistered"
+// user: one that only contributed sending patches and responding to emails,
+// but did not tried to login into the Web platform yet. This makes simpler to
+// onboard new contributors as they don't need to go over a registration process.
+message User {
+    // The identifier of the user.
+    pl.api.Id id = 1;
+
+    // The main identification to which this user is associated with.
+    //
+    // As noted in the documentation for `Identification`, a user may have
+    // multiple identification associated with them, see `extra_identifications`.
+    Identification identification = 2;
+
+    // The current status of the registration process for this user.
+    RegistrationStatus registration_status = 3;
+
+    // Any extra profiles linked to this user.
+    repeated Identification extra_identifications = 8;
+}
+
+// A user's email.
+message Email {
+    // The email itself.
+    string value = 1;
+
+    // If this email is public or private.
+    bool is_public = 2;
+}
+
+// The identification of a user.
+message Identification {
+    // The name of the user in the Web UI and Git operations.
+    //
+    // Note that we link contributions using email, meaning that
+    // the same user may have multiple names associated with it.
+    string name = 1;
+
+    // The email of the user in the Web UI and Git operations.
+    //
+    // Note that a registered user may have multiple emails associated with it.
+    Email email = 2;
+}
+
+// Possible statuses for where the user may be in the registration process.
+enum RegistrationStatus {
+    // Default value.
+    UNKNOWN = 0;
+
+    // The user finished the registration process.
+    //
+    // This means that the user has access to the Web UI.
+    REGISTRATED = 1;
+
+    // The user didn't start the registration process yet.
+    //
+    // It can only use email-related features.
+    UNREGISTRATED = 2;
+
+    // The user started the registration process, but didn't
+    // verified their email yet.
+    PENDING_EMAIL_VERIFICATION = 3;
+}

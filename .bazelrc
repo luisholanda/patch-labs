@@ -1,14 +1,27 @@
 # We require Nix to build
-build --host_platform=@rules_nixpkgs//nixpkgs/platforms:host
 build --repo_env=RULES_RUST_TOOLCHAIN_INCLUDE_RUSTC_SRCS=true
 
 # Zig Hermetic toolchain
 build --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
 build --incompatible_enable_cc_toolchain_resolution
 
+# Prost require source info.
+build --experimental_proto_descriptor_sets_include_source_info
+
+# Support proto3 optionals
+build --protocopt=--experimental_allow_proto3_optional
+
 # Run Clippy on tests
 test --aspects=@rules_rust//rust:defs.bzl%rust_clippy_aspect
 test --output_groups=+clippy_checks
+
+# TODO: enable when rules_rust cuts a release
+# Enable Rust pipelined compilation
+#build --@rules_rust//rust/settings:pipelined_compilation=true
+
+# Use full target path to generate crate name.
+build --@rules_rust//rust/settings:rename_first_party_crates=true
+build --@rules_rust//rust/settings:use_real_import_macro=true
 
 # Cache action outputs on disk so they persist across output_base and bazel shutdown (eg. changing branches)
 build --disk_cache=.bazel-disk-cache

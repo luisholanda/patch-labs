@@ -65,6 +65,10 @@
               export TMP=/tmp
               export TEMP=/tmp
             '';
+            startup.commands = ''
+              alias gen-rs-proj="bazel run @rules_rust//tools/rust_analyzer:gen_rust_project"
+              alias cargo-repin="CARGO_BAZEL_REPIN=1 bazel sync --only=crates"
+            '';
           };
 
         });

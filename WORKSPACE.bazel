@@ -8,10 +8,10 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 # Configure Rust support
 http_archive(
     name = "rules_rust",
-    sha256 = "7fb9b4fe1a6fb4341bdf7c623e619460ecc0f52d5061cc56abc750111fba8a87",
+    sha256 = "05e15e536cc1e5fd7b395d044fc2dabf73d2b27622fbc10504b7e48219bb09bc",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_rust/releases/download/0.7.0/rules_rust-v0.7.0.tar.gz",
-        "https://github.com/bazelbuild/rules_rust/releases/download/0.7.0/rules_rust-v0.7.0.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_rust/releases/download/0.8.1/rules_rust-v0.8.1.tar.gz",
+        "https://github.com/bazelbuild/rules_rust/releases/download/0.8.1/rules_rust-v0.8.1.tar.gz",
     ],
 )
 
@@ -25,27 +25,21 @@ rust_register_toolchains(
     version = "nightly",
 )
 
+load("@rules_rust//tools/rust_analyzer:deps.bzl", "rust_analyzer_dependencies")
+
+rust_analyzer_dependencies()
+
+load("@rules_rust//util/import:deps.bzl", rust_import_macro_deps = "import_deps")
+
+rust_import_macro_deps()
+
 load("@rules_rust//crate_universe:repositories.bzl", "crate_universe_dependencies")
 
 crate_universe_dependencies(rust_version = "nightly-{}".format(RUST_VERSION))
 
-load("@rules_rust//crate_universe:defs.bzl", "crate", "crates_repository")
+load("//:crates.bzl", "external_crates_dependencies")
 
-crates_repository(
-    name = "crates",
-    cargo_lockfile = "//:Cargo.Bazel.lock",
-    packages = {
-        "async-trait": crate.spec(
-            version = "0.1.51",
-        ),
-        "mockall": crate.spec(
-            version = "0.10.2",
-        ),
-        "tokio": crate.spec(
-            version = "1.12.0",
-        ),
-    },
-)
+external_crates_dependencies(name = "crates")
 
 load("@crates//:defs.bzl", "crate_repositories")
 
@@ -56,13 +50,35 @@ git_repository(
     name = "bazel-zig-cc",
     commit = "5240246cab83d23c7a6a7f6b6b95941124d4add1",
     remote = "https://git.sr.ht/~motiejus/bazel-zig-cc",
+    shallow_since = "1659042833 -0700",
 )
 
+load("@bazel-zig-cc//toolchain:defs.bzl", zig_toolchains = "toolchains")
+
+zig_toolchains()
+
 register_toolchains(
-    "@zig_sdk//libc_aware/toolchain:linux_amd64_gnu.2.34",
-    "@zig_sdk//libc_aware/toolchain:linux_amd64_gnu.2.34",
-    "@zig_sdk//libc_aware/toolchain:x86_64-linux-musl",
+    "@zig_sdk//toolchain:linux_amd64_gnu.2.19",
+    "@zig_sdk//toolchain:linux_arm64_gnu.2.28",
+    "@zig_sdk//toolchain:linux_arm64_gnu.2.34",
     "@zig_sdk//toolchain:darwin_amd64",
     "@zig_sdk//toolchain:darwin_arm64",
     "@zig_sdk//toolchain:windows_amd64",
 )
+
+# Protobuf support
+
+http_archive(
+    name = "rules_proto",
+    sha256 = "e017528fd1c91c5a33f15493e3a398181a9e821a804eb7ff5acdd1d2d6c2b18d",
+    strip_prefix = "rules_proto-4.0.0-3.20.0",
+    urls = [
+        "https://github.com/bazelbuild/rules_proto/archive/refs/tags/4.0.0-3.20.0.tar.gz",
+    ],
+)
+
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
+rules_proto_dependencies()
+
+rules_proto_toolchains()

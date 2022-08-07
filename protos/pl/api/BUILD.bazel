@@ -1,0 +1,11 @@
+load("//build/bazel/proto:library.bzl", "pl_proto_library")
+load("//build/bazel/rust:import.bzl", "crate_path")
+
+pl_proto_library(
+    name = "id",
+    srcs = ["id.proto"],
+    rust_exposed_types = {
+        ".pl.api.Id": crate_path("//rust/libs:id", "Id"),
+    },
+    visibility = ["//protos:__subpackages__"],
+)

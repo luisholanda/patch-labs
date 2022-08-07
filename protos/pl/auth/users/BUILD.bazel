@@ -1,0 +1,17 @@
+load("//build/bazel/proto:library.bzl", "pl_proto_library")
+load("//build/bazel/rust:proto.bzl", "pl_rust_proto_library")
+
+pl_proto_library(
+    name = "users",
+    srcs = ["users.proto"],
+    visibility = ["//protos/pl:__subpackages__"],
+    deps = ["//protos/pl/api:id"],
+)
+
+pl_rust_proto_library(
+    name = "users_rust",
+    protos = [":users"],
+    rust_deps = [
+        "//rust/libs:id",
+    ],
+)
