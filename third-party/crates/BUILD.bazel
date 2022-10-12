@@ -64,12 +64,6 @@ alias(
 )
 
 alias(
-    name = "svix-ksuid",
-    actual = "@crates_vendor__svix-ksuid-0.6.0//:svix_ksuid",
-    tags = ["manual"],
-)
-
-alias(
     name = "tokio",
     actual = "@crates_vendor__tokio-1.21.2//:tokio",
     tags = ["manual"],
@@ -84,6 +78,12 @@ alias(
 alias(
     name = "tonic-build",
     actual = "@crates_vendor__tonic-build-0.8.2//:tonic_build",
+    tags = ["manual"],
+)
+
+alias(
+    name = "uuid",
+    actual = "@crates_vendor__uuid-1.2.1//:uuid",
     tags = ["manual"],
 )
 

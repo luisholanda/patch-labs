@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package pl.api;
+
+// Default identifier name of all PL resources.
+//
+// Based on [AIP-122].
+//
+// [AIP-122]: https://google.aip.dev/122
+message ResourceName {
+    string value = 1;
+}

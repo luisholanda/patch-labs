@@ -1,10 +1,10 @@
-load("@rules_rust//rust:defs.bzl", "rust_library")
 load("//build/bazel/proto:library.bzl", "PlProtoInfo")
+load("//build/bazel/rust:library.bzl", "pl_rust_library")
 
 def pl_rust_proto_library(
         name,
         protos,
-        rust_deps = [],
+        deps = [],
         field_attributes = {},
         type_attributes = {}):
     """Compile a list of `proto_library` into a Rust library.
@@ -23,10 +23,11 @@ def pl_rust_proto_library(
         type_attributes = type_attributes,
     )
 
-    rust_library(
+    pl_rust_library(
         name = name,
         srcs = [name + "_pb"],
-        deps = ["@crates//:prost", "@crates//:prost-types"] + rust_deps,
+        deps = ["@crates//:prost", "@crates//:prost-types"] + deps,
+        create_test_target = False,
     )
 
 def _dict_map_each(k):

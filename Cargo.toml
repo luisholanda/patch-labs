@@ -7,7 +7,6 @@ async-trait = "0.1.51"
 prost = "0.11.0"
 prost-build = "0.11.1"
 prost-types = "0.11.1"
-svix-ksuid = "0.6.0"
 tokio = "1.12.0"
 tonic-build = "0.8.0"
 
@@ -21,6 +20,10 @@ features = [
   "codegen"
 ]
 version = "0.8.0"
+
+[dependencies.uuid]
+features = ["v7"]
+version = "1.2.1"
 
 [dev-dependencies]
 mockall = "0.10.2"

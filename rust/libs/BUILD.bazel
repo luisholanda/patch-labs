@@ -1,11 +1,11 @@
-load("@rules_rust//rust:defs.bzl", "rust_library")
+load("//build/bazel/rust:library.bzl", "pl_rust_library")
 
-rust_library(
-    name = "id",
-    srcs = ["id.rs"],
+pl_rust_library(
+    name = "resource_name",
+    srcs = ["resource_name.rs"],
     visibility = ["//visibility:public"],
     deps = [
         "@crates//:prost",
-        "@crates//:svix-ksuid",
+        "@crates//:uuid",
     ],
 )

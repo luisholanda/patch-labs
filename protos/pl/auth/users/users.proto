@@ -3,7 +3,7 @@ syntax = "proto3";
 package pl.auth.users.v1;
 
 import "google/protobuf/timestamp.proto";
-import "protos/pl/api/id.proto";
+import "protos/pl/api/resource_name.proto";
 
 // A user in the system.
 //
@@ -13,8 +13,8 @@ import "protos/pl/api/id.proto";
 // but did not tried to login into the Web platform yet. This makes simpler to
 // onboard new contributors as they don't need to go over a registration process.
 message User {
-    // The identifier of the user.
-    pl.api.Id id = 1;
+    // The resource name of the user.
+    pl.api.ResourceName name = 1;
 
     // The main identification to which this user is associated with.
     //
@@ -22,16 +22,14 @@ message User {
     // multiple identification associated with them, see `extra_identifications`.
     Identification identification = 2;
 
-    // The current status of the registration process for this user.
-    RegistrationStatus registration_status = 3;
-
     // Any extra profiles linked to this user.
     repeated Identification extra_identifications = 8;
 
     // When the user was created.
     google.protobuf.Timestamp create_time = 9;
-    // When the user was registered.
-    google.protobuf.Timestamp register_time = 10;
+
+    // The current status of the registration process for this user.
+    RegistrationStatus registration_status = 10;
 }
 
 // A user's email.

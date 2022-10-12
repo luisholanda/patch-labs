@@ -9,6 +9,12 @@ build --@rules_rust//rust/settings:pipelined_compilation=true
 #build --@rules_rust//rust/settings:rename_first_party_crates=true
 #build --@rules_rust//rust/settings:use_real_import_macro=true
 
+# Prost require source info.
+build --experimental_proto_descriptor_sets_include_source_info
+
+# Support proto3 optionals
+build --protocopt=--experimental_allow_proto3_optional
+
 build --incompatible_strict_action_env
 #build --nolegacy_external_runfiles
 
