@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package pl.auth.users.v1;
 
+import "google/protobuf/timestamp.proto";
 import "protos/pl/api/id.proto";
 
 // A user in the system.
@@ -26,6 +27,11 @@ message User {
 
     // Any extra profiles linked to this user.
     repeated Identification extra_identifications = 8;
+
+    // When the user was created.
+    google.protobuf.Timestamp create_time = 9;
+    // When the user was registered.
+    google.protobuf.Timestamp register_time = 10;
 }
 
 // A user's email.

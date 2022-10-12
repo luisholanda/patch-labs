@@ -11,3 +11,16 @@ rust_binary(
         "@crates//:prost-types",
     ],
 )
+
+rust_binary(
+    name = "grpc-gen",
+    srcs = ["grpc_gen.rs"],
+    visibility = ["//protos:__subpackages__"],
+    deps = [
+        "@crates//:argh",
+        "@crates//:prost",
+        "@crates//:prost-build",
+        "@crates//:prost-types",
+        "@crates//:tonic-build",
+    ],
+)

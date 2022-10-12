@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package pl.auth.users.v1;
+
+import "protos/pl/auth/users/users.proto";
+
+// Service for reading and writing user information.
+//
+// This DOES NOT handle authentication and authorization requests.
+service UsersService {
+    // Create a new unregistered user.
+    //
+    // If creating one from the UI, the client should be redirected
+    // to start the registration process.
+    rpc CreateUser(CreateUserRequest) returns (User);
+}
+
+// Request for the `UsersService.CreateUser` RPC method.
+message CreateUserRequest {
+    // The user to be created.
+    User user = 1;
+}

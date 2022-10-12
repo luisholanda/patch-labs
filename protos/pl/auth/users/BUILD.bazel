@@ -1,17 +1,34 @@
 load("//build/bazel/proto:library.bzl", "pl_proto_library")
+load("//build/bazel/rust:grpc.bzl", "pl_rust_grpc_library")
 load("//build/bazel/rust:proto.bzl", "pl_rust_proto_library")
 
 pl_proto_library(
-    name = "users",
+    name = "users_proto",
     srcs = ["users.proto"],
     visibility = ["//protos/pl:__subpackages__"],
-    deps = ["//protos/pl/api:id"],
-)
-
-pl_rust_proto_library(
-    name = "users_rust",
-    protos = [":users"],
-    rust_deps = [
-        "//rust/libs:id",
+    deps = [
+        "//protos/pl/api:id",
+        "@com_google_protobuf//:timestamp_proto",
     ],
 )
+
+pl_proto_library(
+    name = "service_proto",
+    srcs = ["service.proto"],
+    visibility = ["//protos/pl:__subpackages__"],
+    deps = [":users_proto"],
+)
+
+#pl_rust_proto_library(
+#    name = "users_rust",
+#    protos = [":users_proto"],
+#    rust_deps = [
+#        "//rust/libs:id",
+#    ],
+#)
+#
+#pl_rust_grpc_library(
+#    name = "service_rust",
+#    protos = [":service_proto"],
+#    rust_deps = [":users_rust"],
+#)
