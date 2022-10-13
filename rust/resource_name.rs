@@ -12,7 +12,6 @@ macro_rules! resource_name {
     };
 }
 
-
 /// A resource name.
 ///
 /// This is a _full path_ identifier of a given resource instance.
@@ -26,6 +25,12 @@ pub struct ResourceName {
 impl fmt::Display for ResourceName {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(&self.inner)
+    }
+}
+
+impl AsRef<str> for ResourceName {
+    fn as_ref(&self) -> &str {
+        &self.inner
     }
 }
 
@@ -123,8 +128,14 @@ impl fmt::Display for ResourceNameView<'_> {
     }
 }
 
+impl AsRef<str> for ResourceNameView<'_> {
+    fn as_ref(&self) -> &str {
+        &self.inner
+    }
+}
+
 impl<'n> ResourceNameView<'n> {
-    pub fn get(&self, segment: &'static str) -> &'n str {
+    pub fn get(self, segment: &'static str) -> &'n str {
         let mut curr_segment = "";
 
         for (i, split) in self.inner.split('/').enumerate() {
@@ -141,14 +152,14 @@ impl<'n> ResourceNameView<'n> {
         panic!("Could not find segment '{segment}' in '{self}'")
     }
 
-    pub fn parent(&self) -> Option<ResourceNameView<'n>> {
+    pub fn parent(self) -> Option<ResourceNameView<'n>> {
         self.inner
             .rsplitn(3, '/')
             .nth(2)
             .map(|inner| ResourceNameView { inner })
     }
 
-    pub fn child(&self, segment: &'static str, id: impl fmt::Display) -> ResourceName {
+    pub fn child(self, segment: &'static str, id: impl fmt::Display) -> ResourceName {
         use std::fmt::Write;
 
         let mut inner = self.inner.to_string();
@@ -157,11 +168,11 @@ impl<'n> ResourceNameView<'n> {
         ResourceName { inner }
     }
 
-    pub fn generate_child(&self, segment: &'static str) -> ResourceName {
+    pub fn generate_child(self, segment: &'static str) -> ResourceName {
         self.child(segment, &Uuid::now_v7())
     }
 
-    pub fn is(&self, segment: &'static str) -> bool {
+    pub fn is(self, segment: &'static str) -> bool {
         let last_segment = self
             .inner
             .rsplitn(3, '/')
@@ -171,7 +182,7 @@ impl<'n> ResourceNameView<'n> {
         last_segment == segment
     }
 
-    pub fn id(&self) -> &'n str {
+    pub fn id(self) -> &'n str {
         self.inner
             .rsplit_once('/')
             .unwrap_or_else(|| panic!("Invalid resource name: {self}"))
@@ -181,8 +192,6 @@ impl<'n> ResourceNameView<'n> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn test_resource_name() {
         let data = resource_name!("users/john/repos/linux");

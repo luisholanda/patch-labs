@@ -5,7 +5,7 @@ pl_proto_library(
     name = "resource_name",
     srcs = ["resource_name.proto"],
     rust_exposed_types = {
-        ".pl.api.ResourceName": crate_path("//rust/libs:resource_name", "ResourceName"),
+        ".pl.api.ResourceName": crate_path("//rust:resource_name", "ResourceName"),
     },
     visibility = ["//protos:__subpackages__"],
 )

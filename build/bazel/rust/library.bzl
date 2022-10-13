@@ -4,7 +4,10 @@ def pl_crate_name(name, pkg_name = None):
     pkg_name = pkg_name or native.package_name()
 
     if pkg_name.startswith("rust/") or pkg_name.startswith("//rust/"):
-        pkg_name = pkg_name.split("rust/")[1]
+        pkg_name = "pl/" + pkg_name.split("rust/")[1]
+    elif pkg_name == "rust" or pkg_name == "//rust":
+        pkg_name = "pl"
+
     crate_name_prefix = pkg_name.replace("/", "_")
 
     if pkg_name.endswith(name):

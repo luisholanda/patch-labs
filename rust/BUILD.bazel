@@ -1,0 +1,26 @@
+load("//build/bazel/rust:library.bzl", "pl_rust_library")
+
+package(default_visibility = ["//visibility:public"])
+
+pl_rust_library(
+    name = "resource_name",
+    srcs = ["resource_name.rs"],
+    deps = [
+        "@crates//:prost",
+        "@crates//:uuid",
+    ],
+)
+
+pl_rust_library(
+    name = "database",
+    srcs = ["database.rs"],
+    # FIXME: add tests for this target
+    create_test_target = False,
+    proc_macro_deps = [
+        "@crates//:async-trait",
+    ],
+    deps = [
+        ":resource_name",
+        "@crates//:prost",
+    ],
+)
