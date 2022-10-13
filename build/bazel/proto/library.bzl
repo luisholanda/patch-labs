@@ -1,4 +1,5 @@
 load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_buf//buf:defs.bzl", "buf_lint_test")
 
 PlProtoInfo = provider(
     doc = "Extra protobuf informations.",
@@ -41,10 +42,20 @@ _pl_proto_library_proxy = rule(
 )
 
 def pl_proto_library(name, rust_exposed_types = {}, **kwargs):
-    visibility = kwargs.pop("visibility", [])
+    visibility = kwargs.pop("visibility", None)
+    proto_lib_name = name + "-internal"
+
     proto_library(
-        name = name + "-internal",
+        name = proto_lib_name,
+        strip_import_prefix = "/protos",
+        visibility = ["//visibility:private"],
         **kwargs
+    )
+
+    buf_lint_test(
+        name = name + "-lint",
+        targets = [proto_lib_name],
+        config = "//protos:buf.yaml",
     )
 
     _pl_proto_library_proxy(

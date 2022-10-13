@@ -1,0 +1,17 @@
+# TODO: move to linter.aip.dev
+version: v1
+breaking:
+  use:
+    - WIRE_JSON
+    - RPC_NO_DELETE
+lint:
+  use:
+    - DEFAULT
+    - COMMENTS
+    - PACKAGE_NO_IMPORT_CYCLE
+  except:
+    # Conflicts with AIP-133
+    - RPC_RESPONSE_STANDARD_NAME
+  ignore_only:
+    PACKAGE_VERSION_SUFFIX:
+      - pl/api

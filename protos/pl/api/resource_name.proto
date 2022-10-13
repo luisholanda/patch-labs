@@ -8,5 +8,6 @@ package pl.api;
 //
 // [AIP-122]: https://google.aip.dev/122
 message ResourceName {
-    string value = 1;
+  // The value of the resource name.
+  string value = 1;
 }

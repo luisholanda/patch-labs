@@ -1,0 +1,14 @@
+load("@rules_buf//buf:defs.bzl", "buf_breaking_test")
+
+exports_files(["buf.yaml"])
+
+buf_breaking_test(
+    name = "breaking_test",
+    against = "testdata/image.bin",
+    config = "buf.yaml",
+    targets = [
+        "//protos/pl/api:resource_name",
+        "//protos/pl/auth/users/v1:service_proto",
+        "//protos/pl/auth/users/v1:users_proto",
+    ],
+)
