@@ -4,7 +4,7 @@
 //! database store. The interface is generic over the underlying
 //! storage, meaning that application code can be easily tested
 //! via in-memory databases.
-use std::{ops::{Deref, RangeBounds, Bound}, future::{IntoFuture, Future}, pin::Pin, borrow::Borrow};
+use std::{ops::{Deref, Bound}, future::{IntoFuture, Future}, pin::Pin};
 
 use pl_resource_name::{ResourceNameView, ResourceName};
 use prost::Message;
@@ -114,6 +114,12 @@ pub trait Storage {
 pub trait Key {
     /// The bytes of this key.
     fn bytes(&self) -> &[u8];
+}
+
+impl<K: Key> Key for &'_ K {
+    fn bytes(&self) -> &[u8] {
+        (*self).bytes()
+    }
 }
 
 impl Key for ResourceName {
