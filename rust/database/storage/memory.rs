@@ -1,13 +1,13 @@
 use std::{collections::BTreeMap, sync::Mutex};
 
-use pl_database::{Storage, RangeQuery};
+use pl_database::{RangeQuery, Storage};
 
 /// A in-memory implementation of [`Storage`].
 ///
 /// Used for testing only.
 #[derive(Default)]
 pub struct InMemoryStorage {
-    btree: Mutex<BTreeMap<Vec<u8>, Vec<u8>>>
+    btree: Mutex<BTreeMap<Vec<u8>, Vec<u8>>>,
 }
 
 #[async_trait::async_trait]
@@ -16,7 +16,10 @@ impl Storage for InMemoryStorage {
     type Bytes = Vec<u8>;
 
     async fn set(&self, key: &[u8], value: &[u8]) {
-        self.btree.lock().unwrap().insert(key.to_vec(), value.to_vec());
+        self.btree
+            .lock()
+            .unwrap()
+            .insert(key.to_vec(), value.to_vec());
     }
 
     async fn get(&self, key: &[u8]) -> Option<Self::Key> {

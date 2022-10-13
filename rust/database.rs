@@ -4,9 +4,13 @@
 //! database store. The interface is generic over the underlying
 //! storage, meaning that application code can be easily tested
 //! via in-memory databases.
-use std::{ops::{Deref, Bound}, future::{IntoFuture, Future}, pin::Pin};
+use std::{
+    future::{Future, IntoFuture},
+    ops::{Bound, Deref},
+    pin::Pin,
+};
 
-use pl_resource_name::{ResourceNameView, ResourceName};
+use pl_resource_name::{ResourceName, ResourceNameView};
 use prost::Message;
 
 /// A key-value database generic over its storage system.
@@ -26,12 +30,11 @@ impl<S: Storage> Database<S> {
     /// Returns `None` if we don't find the key in the storage.
     pub async fn get<R>(&self, key: impl Key) -> Option<R>
     where
-        R: Message + Default
+        R: Message + Default,
     {
         let bytes = self.storage.get(key.bytes()).await?;
 
-        let resource = R::decode(&*bytes)
-            .expect("failed to decode resource");
+        let resource = R::decode(&*bytes).expect("failed to decode resource");
 
         Some(resource)
     }
@@ -45,7 +48,7 @@ impl<S: Storage> Database<S> {
     /// If a value is already present in the storage, it will be overriden.
     pub async fn set<R>(&self, key: impl Key, resource: &R)
     where
-        R: Message
+        R: Message,
     {
         let mut buf = vec![];
 
@@ -68,7 +71,7 @@ impl<S: Storage> Database<S> {
             end: Bound::Unbounded,
             limit: None,
             reverse: false,
-            storage: &self.storage
+            storage: &self.storage,
         }
     }
 }
@@ -146,7 +149,7 @@ pub struct RangeQueryBuilder<'s, S, Ks, Ke> {
     end: Bound<Ke>,
     limit: Option<usize>,
     reverse: bool,
-    storage: &'s S
+    storage: &'s S,
 }
 
 impl<'s, S, Ks, Ke> IntoFuture for RangeQueryBuilder<'s, S, Ks, Ke>
@@ -161,12 +164,14 @@ where
 
     fn into_future(self) -> Self::IntoFuture {
         Box::pin(async move {
-            self.storage.range(RangeQuery {
-                start: bound_to_key(&self.start),
-                end: bound_to_key(&self.end),
-                limit: self.limit,
-                reverse: self.reverse,
-            }).await
+            self.storage
+                .range(RangeQuery {
+                    start: bound_to_key(&self.start),
+                    end: bound_to_key(&self.end),
+                    limit: self.limit,
+                    reverse: self.reverse,
+                })
+                .await
         })
     }
 }

@@ -1,6 +1,42 @@
 build --action_env BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
 build --incompatible_enable_cc_toolchain_resolution
 
+build \
+  --@rules_rust//:extra_rustc_flag='-Dfuture-incompatible' \
+  --@rules_rust//:extra_rustc_flag='-Dnonstandard-style' \
+  --@rules_rust//:extra_rustc_flag='-Wunused' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::complexity' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::suspicious' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::style' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::case_sensitive_file_extension_comparisons' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::cast_lossless' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::cast_possible_wrap' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::checked_conversions' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::cloned_instead_of_copied' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::default_trait_access' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::doc_link_with_quotes' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::doc_markdown' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::enum_glob_use' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::explicit_deref_methods' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::explicit_into_iter_loop' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::flat_map_option' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::implicit_saturating_sub' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::items_after_statements' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::large_types_passed_by_value' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::let_underscore_drop' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::manual_assert' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::map_unwrap_or' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::match_wildcard_for_single_variants' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::mismatching_type_param_order' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::missing_panics_doc' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::needless_pass_by_value' \
+  --@rules_rust//:extra_rustc_flag='-Dclippy::cognitive_complexity' \
+  --@rules_rust//:extra_rustc_flag='-Wclippy::no_effect_underscore_binding' \
+  --@rules_rust//:extra_rustc_flag='-Wclippy::too_many_lines' \
+
+test --aspects=@rules_rust//rust:defs.bzl%rust_clippy_aspect
+test --output_groups=+clippy_checks
+
 # TODO: enable when rules_rust cuts a release
 # Enable Rust pipelined compilation
 build --@rules_rust//rust/settings:pipelined_compilation=true

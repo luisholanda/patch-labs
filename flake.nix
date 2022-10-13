@@ -39,8 +39,15 @@
           build = {
             enable = true;
             name = "Build";
-            description = "Check targets build";
-            entry = "bazel build //...";
+            description = "Check that targets build";
+            entry = "TEMP=/tmp bazel build //...";
+            pass_filenames = false;
+          };
+          test = {
+            enable = true;
+            name = "Test";
+            description = "Run all tests";
+            entry = "TEMP=/tmp bazel test //...";
             pass_filenames = false;
           };
           buildifier = {
@@ -50,6 +57,7 @@
             types = ["file" "bazel"];
             entry = "${pkgs.bazel-buildtools}/bin/buildifier";
           };
+          rustfmt.enable = true;
         };
       };
 

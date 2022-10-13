@@ -6,6 +6,7 @@ use uuid::Uuid;
 /// Macro to make easy to create a new resource name.
 ///
 /// Usable only in tests.
+#[macro_export]
 macro_rules! resource_name {
     ($name: literal) => {
         $crate::ResourceName::__new($name.to_string())
@@ -19,7 +20,7 @@ macro_rules! resource_name {
 /// An example would be `"users/john/repo/linux"` for a repository name.
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ResourceName {
-    inner: String
+    inner: String,
 }
 
 impl fmt::Display for ResourceName {
@@ -38,7 +39,7 @@ impl prost::Message for ResourceName {
     fn encode_raw<B>(&self, buf: &mut B)
     where
         B: prost::bytes::BufMut,
-        Self: Sized
+        Self: Sized,
     {
         self.inner.encode_raw(buf)
     }
@@ -52,7 +53,8 @@ impl prost::Message for ResourceName {
     ) -> Result<(), prost::DecodeError>
     where
         B: prost::bytes::Buf,
-        Self: Sized {
+        Self: Sized,
+    {
         self.inner.merge_field(tag, wire_type, buf, ctx)
     }
 
@@ -119,22 +121,27 @@ impl ResourceName {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ResourceNameView<'n> {
-    inner: &'n str
+    inner: &'n str,
 }
 
 impl fmt::Display for ResourceNameView<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(&self.inner)
+        f.write_str(self.inner)
     }
 }
 
 impl AsRef<str> for ResourceNameView<'_> {
     fn as_ref(&self) -> &str {
-        &self.inner
+        self.inner
     }
 }
 
 impl<'n> ResourceNameView<'n> {
+    /// Get a given segment value from this resource name.
+    ///
+    /// # Panics
+    ///
+    /// If the segment is not present in the name.
     pub fn get(self, segment: &'static str) -> &'n str {
         let mut curr_segment = "";
 
@@ -175,9 +182,9 @@ impl<'n> ResourceNameView<'n> {
     pub fn is(self, segment: &'static str) -> bool {
         let last_segment = self
             .inner
-            .rsplitn(3, '/')
+            .rsplit('/')
             .nth(1)
-            .unwrap_or_else(|| panic!("Invalid resource name: {self}"));
+            .unwrap_or_else(|| unreachable!("Invalid resource name: {self}"));
 
         last_segment == segment
     }
@@ -185,7 +192,7 @@ impl<'n> ResourceNameView<'n> {
     pub fn id(self) -> &'n str {
         self.inner
             .rsplit_once('/')
-            .unwrap_or_else(|| panic!("Invalid resource name: {self}"))
+            .unwrap_or_else(|| unreachable!("Invalid resource name: {self}"))
             .1
     }
 }
@@ -217,7 +224,6 @@ mod tests {
     fn test_missing_segment() {
         resource_name!("users/john").get("repos");
     }
-
 
     #[test]
     #[should_panic(expected = "Could not find segment 'repos' in 'users/john_repos'")]

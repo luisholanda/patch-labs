@@ -1,4 +1,4 @@
-use std::io::{Write, BufWriter};
+use std::io::{BufWriter, Write};
 
 use prost::Message;
 use prost_build::{Config, Module};

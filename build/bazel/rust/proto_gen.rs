@@ -2,7 +2,7 @@ use prost::Message;
 use prost_build::{Config, Module};
 use prost_types::FileDescriptorSet;
 
-use std::io::{Write, BufWriter};
+use std::io::{BufWriter, Write};
 
 #[derive(Debug, argh::FromArgs)]
 #[argh(description = "compile a protobuf descriptor set into Rust code")]
