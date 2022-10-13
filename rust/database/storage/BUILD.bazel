@@ -1,0 +1,12 @@
+load("//build/bazel/rust:library.bzl", "pl_rust_library")
+
+pl_rust_library(
+    name = "memory",
+    testonly = True,
+    srcs = ["memory.rs"],
+    proc_macro_deps = ["@crates//:async-trait"],
+    test_deps = [
+        "@crates//:tokio",
+    ],
+    deps = ["//rust:database"],
+)
