@@ -5,10 +5,10 @@ rust_binary(
     srcs = ["proto_gen.rs"],
     visibility = ["//protos:__subpackages__"],
     deps = [
-        "@crates//:argh",
-        "@crates//:prost",
-        "@crates//:prost-build",
-        "@crates//:prost-types",
+        "//third-party/crates:argh",
+        "//third-party/crates:prost",
+        "//third-party/crates:prost-build",
+        "//third-party/crates:prost-types",
     ],
 )
 
@@ -17,10 +17,10 @@ rust_binary(
     srcs = ["grpc_gen.rs"],
     visibility = ["//protos:__subpackages__"],
     deps = [
-        "@crates//:argh",
-        "@crates//:prost",
-        "@crates//:prost-build",
-        "@crates//:prost-types",
-        "@crates//:tonic-build",
+        "//third-party/crates:argh",
+        "//third-party/crates:prost",
+        "//third-party/crates:prost-build",
+        "//third-party/crates:prost-types",
+        "//third-party/crates:tonic-build",
     ],
 )

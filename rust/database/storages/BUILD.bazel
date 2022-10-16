@@ -6,7 +6,7 @@ pl_rust_library(
     srcs = ["memory.rs"],
     proc_macro_deps = ["@crates//:async-trait"],
     test_deps = [
-        "@crates//:tokio",
+        "//third-party/crates:tokio",
     ],
     deps = ["//rust/database"],
 )

@@ -26,7 +26,7 @@ def pl_rust_proto_library(
     pl_rust_library(
         name = name,
         srcs = [name + "_pb"],
-        deps = ["@crates//:prost", "@crates//:prost-types"] + deps,
+        deps = ["//third-party/crates:prost", "//third-party/crates:prost-types"] + deps,
         create_test_target = False,
     )
 

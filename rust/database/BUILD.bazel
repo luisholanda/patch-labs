@@ -8,11 +8,13 @@ pl_rust_library(
     # FIXME: add tests for this target
     create_test_target = False,
     proc_macro_deps = [
-        "@crates//:async-trait",
+        "//third-party/crates:async-trait",
     ],
     deps = [
         "//rust/api:resource_name",
-        "@crates//:bytes",
-        "@crates//:prost",
+        "//third-party/crates:bytes",
+        "//third-party/crates:foundationdb",
+        "//third-party/crates:prost",
+        "//third-party/crates:sled",
     ],
 )

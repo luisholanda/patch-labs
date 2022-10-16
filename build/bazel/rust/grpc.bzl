@@ -27,9 +27,9 @@ def pl_rust_grpc_library(
         name = name,
         srcs = [name + "_grpc"],
         deps = rust_deps + [
-            "@crates//:prost",
-            "@crates//:prost-types",
-            "@crates//:tonic",
+            "//third-party/crates:prost",
+            "//third-party/crates:prost-types",
+            "//third-party/crates:tonic",
         ],
     )
 

@@ -6,7 +6,7 @@ pl_rust_library(
     name = "resource_name",
     srcs = ["resource_name.rs"],
     deps = [
-        "@crates//:prost",
-        "@crates//:smallvec",
+        "//third-party/crates:prost",
+        "//third-party/crates:smallvec",
     ],
 )
