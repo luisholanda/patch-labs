@@ -35,27 +35,101 @@ load("//third-party/crates:crates.bzl", "crate_repositories")
 
 crate_repositories()
 
-# Add hermetic C/C++ toolchain
+###############
+#  Nix Setup  #
+###############
+
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
 git_repository(
-    name = "bazel-zig-cc",
-    commit = "5240246cab83d23c7a6a7f6b6b95941124d4add1",
-    remote = "https://git.sr.ht/~motiejus/bazel-zig-cc",
-    shallow_since = "1659042833 -0700",
+    name = "rules_nixpkgs",
+    commit = "a64a1b2faae2c36ae34bbf4f17eb52317c48a83d",
+    remote = "https://github.com/tweag/rules_nixpkgs.git",
+    shallow_since = "1663761031 +0000",
 )
 
-load("@bazel-zig-cc//toolchain:defs.bzl", zig_toolchains = "toolchains")
+load("@rules_nixpkgs//nixpkgs:repositories.bzl", "rules_nixpkgs_dependencies")
 
-zig_toolchains()
+rules_nixpkgs_dependencies(rules_nixpkgs_name = "rules_nixpkgs")
 
-register_toolchains(
-    "@zig_sdk//toolchain:linux_amd64_gnu.2.34",
-    "@zig_sdk//toolchain:linux_arm64_gnu.2.34",
-    "@zig_sdk//toolchain:darwin_amd64",
-    "@zig_sdk//toolchain:darwin_arm64",
-    "@zig_sdk//toolchain:windows_amd64",
+# Configure nixpkgs.
+load(
+    "@rules_nixpkgs//nixpkgs:nixpkgs.bzl",
+    "nixpkgs_local_repository",
 )
 
-# Protobuf support
+# Use the same Nixpkgs as the flake.
+nixpkgs_local_repository(
+    name = "nixpkgs",
+    nix_file_content = """
+    _: let
+        flake = builtins.getFlake (toString ./.);
+        baseNixpkgs = flake.inputs.nixpkgs.legacyPackages.${builtins.currentSystem};
+    in builtins.foldl'
+        (acc: overlay: acc.extend overlay)
+        baseNixpkgs
+        (builtins.attrValues (flake.overlays or {}))
+    """,
+    nix_file_deps = [
+        "//:flake.lock",
+        "//:flake.nix",
+    ],
+)
+
+#################
+#  C/C++ setup  #
+#################
+
+load("@rules_nixpkgs//toolchains/cc:cc.bzl", "nixpkgs_cc_configure")
+load("@rules_nixpkgs//nixpkgs:nixpkgs.bzl", "nixpkgs_package")
+
+nixpkgs_cc_configure(
+    attribute_path = "clang_14",
+    nix_file_content = "import <nixpkgs> {}",
+    repository = "@nixpkgs",
+)
+
+nixpkgs_package(
+    name = "glibc",
+    attribute_path = "glibc.dev",
+    build_file_content = """
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+filegroup(
+    name = "headers",
+    srcs = glob(["include/**/*"]),
+    visibility = ["//visibility:public"]
+)
+""",
+    nix_file_content = "import <nixpkgs> {}",
+    repository = "@nixpkgs",
+)
+
+nixpkgs_package(
+    name = "libclang",
+    attribute_path = "clang_14.cc.lib",
+    build_file_content = """
+load("@rules_cc//cc:defs.bzl", "cc_import")
+
+package(default_visibility = ["//visibility:public"])
+
+alias(
+    name = "libclang.so",
+    actual = "lib/libclang.so",
+)
+
+cc_import(
+    name = "libclang",
+    shared_library = "lib/libclang.so",
+)
+    """,
+    nix_file_content = "import <nixpkgs> {}",
+    repository = "@nixpkgs",
+)
+
+######################
+#  Protobuf support  #
+######################
 
 http_archive(
     name = "rules_proto",

@@ -111,6 +111,8 @@ cargo_build_script(
         },
     }),
     build_script_env = {
+        "BINDGEN_EXTRA_CLANG_ARGS": "-I$${pwd}/external/glibc/include",
+        "LIBCLANG_PATH": "$(execpath @libclang//:libclang.so)",
     },
     compile_data = select_with_or({
         "//conditions:default": [
@@ -124,6 +126,8 @@ cargo_build_script(
     crate_root = "build.rs",
     data = glob(["**"]) + select_with_or({
         "//conditions:default": [
+            "@glibc//:headers",
+            "@libclang//:libclang.so",
         ],
     }),
     edition = "2021",

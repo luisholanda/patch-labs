@@ -11,8 +11,20 @@ crates_vendor(
         )],
         "foundationdb": [crate.annotation(
             deps = [
-                "//third-party/foundationdb:libfdb",
+                "@patch-labs//third-party/foundationdb:libfdb",
             ],
+        )],
+        "foundationdb-sys": [crate.annotation(
+            build_script_data = [
+                "@libclang//:libclang.so",
+                "@glibc//:headers",
+            ],
+            build_script_env = {
+                "LIBCLANG_PATH": "$(execpath @libclang//:libclang.so)",
+                # Yes, this is a stupid hack to get bindgen's clang to find
+                # system headers.
+                "BINDGEN_EXTRA_CLANG_ARGS": "-I$${pwd}/external/glibc/include",
+            },
         )],
     },
     cargo_lockfile = "//:Cargo.Bazel.lock",
