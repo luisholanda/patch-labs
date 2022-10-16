@@ -8,5 +8,5 @@ pl_rust_library(
     test_deps = [
         "@crates//:tokio",
     ],
-    deps = ["//rust:database"],
+    deps = ["//rust/database"],
 )

@@ -1,0 +1,12 @@
+load("//build/bazel/rust:library.bzl", "pl_rust_library")
+
+package(default_visibility = ["//visibility:public"])
+
+pl_rust_library(
+    name = "resource_name",
+    srcs = ["resource_name.rs"],
+    deps = [
+        "@crates//:prost",
+        "@crates//:smallvec",
+    ],
+)

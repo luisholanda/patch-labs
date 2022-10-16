@@ -292,9 +292,11 @@ _NORMAL_DEPENDENCIES = {
     "": {
         _COMMON_CONDITION: {
             "argh": "@crates_vendor__argh-0.1.9//:argh",
+            "bytes": "@crates_vendor__bytes-1.2.1//:bytes",
             "prost": "@crates_vendor__prost-0.11.0//:prost",
             "prost-build": "@crates_vendor__prost-build-0.11.1//:prost_build",
             "prost-types": "@crates_vendor__prost-types-0.11.1//:prost_types",
+            "smallvec": "@crates_vendor__smallvec-1.10.0//:smallvec",
             "tokio": "@crates_vendor__tokio-1.21.2//:tokio",
             "tonic": "@crates_vendor__tonic-0.8.2//:tonic",
             "tonic-build": "@crates_vendor__tonic-build-0.8.2//:tonic_build",
@@ -1297,6 +1299,16 @@ def crate_repositories():
         urls = ["https://crates.io/api/v1/crates/slab/0.4.7/download"],
         strip_prefix = "slab-0.4.7",
         build_file = Label("@patch-labs//third-party/crates:BUILD.slab-0.4.7.bazel"),
+    )
+
+    maybe(
+        http_archive,
+        name = "crates_vendor__smallvec-1.10.0",
+        sha256 = "a507befe795404456341dfab10cef66ead4c041f62b8b11bbb92bffe5d0953e0",
+        type = "tar.gz",
+        urls = ["https://crates.io/api/v1/crates/smallvec/1.10.0/download"],
+        strip_prefix = "smallvec-1.10.0",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.smallvec-1.10.0.bazel"),
     )
 
     maybe(

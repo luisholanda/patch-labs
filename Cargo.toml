@@ -4,11 +4,17 @@ members = []
 [dependencies]
 argh = "0.1.8"
 async-trait = "0.1.51"
+bytes = "1.2.1"
 prost = "0.11.0"
 prost-build = "0.11.1"
 prost-types = "0.11.1"
 tokio = "1.12.0"
 tonic-build = "0.8.0"
+
+
+[dependencies.smallvec]
+features = ["const_generics", "union"]
+version = "1.10.0"
 
 [dependencies.tonic]
 default-features = false

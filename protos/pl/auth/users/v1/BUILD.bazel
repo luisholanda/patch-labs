@@ -23,7 +23,7 @@ pl_rust_proto_library(
     name = "users_rust",
     protos = [":users_proto"],
     deps = [
-        "//rust:resource_name",
+        "//rust/api:resource_name",
     ],
 )
 #

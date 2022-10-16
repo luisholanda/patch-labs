@@ -186,10 +186,12 @@ version = "0.0.1"
 dependencies = [
  "argh",
  "async-trait",
+ "bytes",
  "mockall",
  "prost",
  "prost-build",
  "prost-types",
+ "smallvec",
  "tokio",
  "tonic",
  "tonic-build",
@@ -838,6 +840,12 @@ checksum = "4614a76b2a8be0058caa9dbbaf66d988527d86d003c11a94fbd335d7661edcef"
 dependencies = [
  "autocfg",
 ]
+
+[[package]]
+name = "smallvec"
+version = "1.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a507befe795404456341dfab10cef66ead4c041f62b8b11bbb92bffe5d0953e0"
 
 [[package]]
 name = "socket2"

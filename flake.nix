@@ -105,7 +105,7 @@
           gen-rust-project = {
             help = "Generate the rust-project.json file.";
             command = "bazel run //:gen-rust-project";
-            category = "helpers";
+            category = "generators";
           };
 
           repin-crates = {
@@ -126,11 +126,19 @@
                 -o $PWD/protos/testdata/image.bin \
                 $PWD/protos
             '';
+            category = "generators";
+          };
+
+          rust-analyzer-check = {
+            help = "Command to pass to rust-analyzer as a replacement to cargo check";
+            command = ''
+              bazel build --config=ra //rust/... 2>&1
+            '';
             category = "helpers";
           };
         };
 
-        packages = pkgs: with pkgs; [bazel_5 jdk11 zlib];
+        packages = pkgs: with pkgs; [bazel_5 jdk11 zlib bazel-watcher];
 
         startup.pre-commit = pre-commit-check.shellHook;
       };

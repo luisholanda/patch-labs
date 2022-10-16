@@ -34,6 +34,12 @@ build \
   --@rules_rust//:extra_rustc_flag='-Wclippy::no_effect_underscore_binding' \
   --@rules_rust//:extra_rustc_flag='-Wclippy::too_many_lines' \
 
+build:ra --@rules_rust//:error_format=json
+#build:ra --aspects=@rules_rust//rust:defs.bzl%rust_clippy_aspect
+#build:ra --output_groups=+clippy_checks
+build:ra --noshow_progress
+build:ra --ui_event_filters=-INFO
+
 test --aspects=@rules_rust//rust:defs.bzl%rust_clippy_aspect
 test --output_groups=+clippy_checks
 

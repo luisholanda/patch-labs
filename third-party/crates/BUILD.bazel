@@ -40,6 +40,12 @@ alias(
 )
 
 alias(
+    name = "bytes",
+    actual = "@crates_vendor__bytes-1.2.1//:bytes",
+    tags = ["manual"],
+)
+
+alias(
     name = "mockall",
     actual = "@crates_vendor__mockall-0.10.2//:mockall",
     tags = ["manual"],
@@ -60,6 +66,12 @@ alias(
 alias(
     name = "prost-types",
     actual = "@crates_vendor__prost-types-0.11.1//:prost_types",
+    tags = ["manual"],
+)
+
+alias(
+    name = "smallvec",
+    actual = "@crates_vendor__smallvec-1.10.0//:smallvec",
     tags = ["manual"],
 )
 
