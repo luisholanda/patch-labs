@@ -92,3 +92,35 @@ load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_
 rules_proto_dependencies()
 
 rules_proto_toolchains()
+
+# FoundationDB files
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+
+FDB_VERSION = "7.1.23"
+
+FDB_DOWNLOAD_URL = "https://github.com/apple/foundationdb/releases/download"
+
+http_file(
+    name = "fdbcli",
+    downloaded_file_path = "fdbcli",
+    executable = True,
+    sha256 = "af20f0b8219ec284ecd9fabc74826b404afd5581bf87dde2b048d5fded32cfdd",
+    urls = ["{}/{}/fdbcli.x86_64".format(FDB_DOWNLOAD_URL, FDB_VERSION)],
+)
+
+http_file(
+    name = "libfdb",
+    downloaded_file_path = "libfdb_c.so",
+    executable = True,
+    sha256 = "2af4d714c1e84879393ef4a73c8d1522041af183b97af901e9fd98a17ba583eb",
+    urls = ["{}/{}/libfdb_c.x86_64.so".format(FDB_DOWNLOAD_URL, FDB_VERSION)],
+)
+
+http_file(
+    name = "fdbserver",
+    downloaded_file_path = "fdbserver",
+    executable = True,
+    sha256 = "91b40e5351f1bb0562dad6b9b659b9cb5f25f64a2b0bd8ffd5997e36617ac6d6",
+    urls = ["{}/{}/fdbserver.x86_64".format(FDB_DOWNLOAD_URL, FDB_VERSION)],
+)

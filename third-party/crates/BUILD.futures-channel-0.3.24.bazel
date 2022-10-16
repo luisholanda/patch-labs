@@ -56,6 +56,8 @@ rust_library(
     crate_features = [
         "alloc",
         "default",
+        "futures-sink",
+        "sink",
         "std",
     ],
     crate_root = "src/lib.rs",
@@ -94,6 +96,7 @@ rust_library(
         "//conditions:default": [
             "@crates_vendor__futures-channel-0.3.24//:build_script_build",
             "@crates_vendor__futures-core-0.3.24//:futures_core",
+            "@crates_vendor__futures-sink-0.3.24//:futures_sink",
         ],
     }),
 )
@@ -121,6 +124,8 @@ cargo_build_script(
     crate_features = [
         "alloc",
         "default",
+        "futures-sink",
+        "sink",
         "std",
     ],
     crate_name = "build_script_build",

@@ -15,17 +15,18 @@ load(
 load("@rules_rust//crate_universe/private:selects.bzl", "select_with_or")
 load(
     "@rules_rust//rust:defs.bzl",
-    "rust_proc_macro",
+    "rust_binary",
+    "rust_library",
 )
 
 package(default_visibility = ["//visibility:public"])
 
 # licenses([
-#     "TODO",  # Apache-2.0 OR MIT
+#     "TODO",  # MIT
 # ])
 
-rust_proc_macro(
-    name = "pin_project_internal",
+rust_library(
+    name = "xml",
     srcs = glob(
         include = [
             "**/*.rs",
@@ -56,7 +57,7 @@ rust_proc_macro(
         "//conditions:default": [
         ],
     }),
-    edition = "2018",
+    edition = "2015",
     proc_macro_deps = [
     ] + select_with_or({
         "//conditions:default": [
@@ -81,13 +82,76 @@ rust_proc_macro(
         "noclippy",
         "norustfmt",
     ],
-    version = "1.0.12",
+    version = "0.8.4",
     deps = [
     ] + select_with_or({
         "//conditions:default": [
-            "@crates_vendor__proc-macro2-1.0.47//:proc_macro2",
-            "@crates_vendor__quote-1.0.21//:quote",
-            "@crates_vendor__syn-1.0.102//:syn",
+        ],
+    }),
+)
+
+rust_binary(
+    name = "xml-analyze__bin",
+    srcs = glob(
+        include = [
+            "**/*.rs",
+        ],
+        exclude = [
+        ],
+    ),
+    aliases = selects.with_or({
+        "//conditions:default": {
+        },
+    }),
+    compile_data = glob(
+        include = ["**"],
+        exclude = [
+            "BUILD",
+            "BUILD.bazel",
+            "WORKSPACE",
+            "WORKSPACE.bazel",
+        ],
+    ) + select_with_or({
+        "//conditions:default": [
+        ],
+    }),
+    crate_features = [
+    ],
+    crate_root = "src/analyze.rs",
+    data = select_with_or({
+        "//conditions:default": [
+        ],
+    }),
+    edition = "2015",
+    proc_macro_deps = [
+    ] + select_with_or({
+        "//conditions:default": [
+        ],
+    }),
+    rustc_env = {
+    },
+    rustc_env_files = select_with_or({
+        "//conditions:default": [
+        ],
+    }),
+    rustc_flags = [
+        # In most cases, warnings in 3rd party crates are not interesting as
+        # they're out of the control of consumers. The flag here silences
+        # warnings. For more details see:
+        # https://doc.rust-lang.org/rustc/lints/levels.html
+        "--cap-lints=allow",
+    ],
+    tags = [
+        "cargo-bazel",
+        "manual",
+        "noclippy",
+        "norustfmt",
+    ],
+    version = "0.8.4",
+    deps = [
+        ":xml",
+    ] + select_with_or({
+        "//conditions:default": [
         ],
     }),
 )

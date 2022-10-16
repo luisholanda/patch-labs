@@ -11,6 +11,13 @@ prost-types = "0.11.1"
 tokio = "1.12.0"
 tonic-build = "0.8.0"
 
+[dependencies.foundationdb]
+default-features = false
+features = [
+  "fdb-7_1",
+  "embedded-fdb-include"
+]
+version = "0.7.0"
 
 [dependencies.smallvec]
 features = ["const_generics", "union"]

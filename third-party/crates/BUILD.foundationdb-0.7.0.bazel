@@ -25,11 +25,11 @@ load(
 package(default_visibility = ["//visibility:public"])
 
 # licenses([
-#     "TODO",  # MIT OR Apache-2.0
+#     "TODO",  # MIT/Apache-2.0
 # ])
 
 rust_library(
-    name = "prettyplease",
+    name = "foundationdb",
     srcs = glob(
         include = [
             "**/*.rs",
@@ -54,6 +54,8 @@ rust_library(
         ],
     }),
     crate_features = [
+        "embedded-fdb-include",
+        "fdb-7_1",
     ],
     crate_root = "src/lib.rs",
     data = select_with_or({
@@ -64,6 +66,9 @@ rust_library(
     proc_macro_deps = [
     ] + select_with_or({
         "//conditions:default": [
+            "@crates_vendor__async-recursion-1.0.0//:async_recursion",
+            "@crates_vendor__async-trait-0.1.57//:async_trait",
+            "@crates_vendor__foundationdb-macros-0.1.1//:foundationdb_macros",
         ],
     }),
     rustc_env = {
@@ -85,20 +90,24 @@ rust_library(
         "noclippy",
         "norustfmt",
     ],
-    version = "0.1.20",
+    version = "0.7.0",
     deps = [
+        "//third-party/foundationdb:libfdb",
     ] + select_with_or({
         "//conditions:default": [
-            "@crates_vendor__prettyplease-0.1.20//:build_script_build",
-            "@crates_vendor__proc-macro2-1.0.46//:proc_macro2",
-            "@crates_vendor__syn-1.0.102//:syn",
+            "@crates_vendor__foundationdb-0.7.0//:build_script_build",
+            "@crates_vendor__foundationdb-sys-0.7.0//:foundationdb_sys",
+            "@crates_vendor__futures-0.3.24//:futures",
+            "@crates_vendor__memchr-2.5.0//:memchr",
+            "@crates_vendor__rand-0.8.5//:rand",
+            "@crates_vendor__static_assertions-1.1.0//:static_assertions",
         ],
     }),
 )
 
 cargo_build_script(
     # See comment associated with alias. Do not change this name
-    name = "prettyplease_build_script",
+    name = "foundationdb_build_script",
     srcs = glob(
         include = [
             "**/*.rs",
@@ -117,6 +126,8 @@ cargo_build_script(
         ],
     }),
     crate_features = [
+        "embedded-fdb-include",
+        "fdb-7_1",
     ],
     crate_name = "build_script_build",
     crate_root = "build.rs",
@@ -125,7 +136,6 @@ cargo_build_script(
         ],
     }),
     edition = "2021",
-    links = "prettyplease01",
     proc_macro_deps = [
     ] + select_with_or({
         "//conditions:default": [
@@ -154,11 +164,13 @@ cargo_build_script(
         "//conditions:default": [
         ],
     }),
-    version = "0.1.20",
+    version = "0.7.0",
     visibility = ["//visibility:private"],
     deps = [
     ] + select_with_or({
         "//conditions:default": [
+            "@crates_vendor__foundationdb-gen-0.7.0//:foundationdb_gen",
+            "@crates_vendor__foundationdb-sys-0.7.0//:foundationdb_sys",
         ],
     }),
 )
@@ -170,7 +182,7 @@ alias(
     # of `build_script_build` without losing out on having certain Cargo
     # environment variables set.
     name = "build_script_build",
-    actual = "prettyplease_build_script",
+    actual = "foundationdb_build_script",
     tags = [
         "manual",
     ],

@@ -54,6 +54,7 @@ rust_library(
         ],
     }),
     crate_features = [
+        "std",
     ],
     crate_root = "src/lib.rs",
     data = select_with_or({
@@ -116,6 +117,7 @@ cargo_build_script(
         ],
     }),
     crate_features = [
+        "std",
     ],
     crate_name = "build_script_build",
     crate_root = "build.rs",

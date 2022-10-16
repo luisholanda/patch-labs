@@ -100,7 +100,7 @@ rust_library(
     deps = [
     ] + select_with_or({
         "//conditions:default": [
-            "@crates_vendor__proc-macro2-1.0.46//:proc_macro2",
+            "@crates_vendor__proc-macro2-1.0.47//:proc_macro2",
             "@crates_vendor__quote-1.0.21//:quote",
             "@crates_vendor__syn-1.0.102//:build_script_build",
             "@crates_vendor__unicode-ident-1.0.5//:unicode_ident",

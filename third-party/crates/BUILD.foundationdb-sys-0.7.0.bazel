@@ -19,17 +19,17 @@ load(
 load("@rules_rust//crate_universe/private:selects.bzl", "select_with_or")
 load(
     "@rules_rust//rust:defs.bzl",
-    "rust_proc_macro",
+    "rust_library",
 )
 
 package(default_visibility = ["//visibility:public"])
 
 # licenses([
-#     "TODO",  # MIT OR Apache-2.0
+#     "TODO",  # MIT/Apache-2.0
 # ])
 
-rust_proc_macro(
-    name = "async_trait",
+rust_library(
+    name = "foundationdb_sys",
     srcs = glob(
         include = [
             "**/*.rs",
@@ -54,13 +54,15 @@ rust_proc_macro(
         ],
     }),
     crate_features = [
+        "embedded-fdb-include",
+        "fdb-7_1",
     ],
     crate_root = "src/lib.rs",
     data = select_with_or({
         "//conditions:default": [
         ],
     }),
-    edition = "2018",
+    edition = "2021",
     proc_macro_deps = [
     ] + select_with_or({
         "//conditions:default": [
@@ -85,21 +87,18 @@ rust_proc_macro(
         "noclippy",
         "norustfmt",
     ],
-    version = "0.1.57",
+    version = "0.7.0",
     deps = [
     ] + select_with_or({
         "//conditions:default": [
-            "@crates_vendor__async-trait-0.1.57//:build_script_build",
-            "@crates_vendor__proc-macro2-1.0.47//:proc_macro2",
-            "@crates_vendor__quote-1.0.21//:quote",
-            "@crates_vendor__syn-1.0.102//:syn",
+            "@crates_vendor__foundationdb-sys-0.7.0//:build_script_build",
         ],
     }),
 )
 
 cargo_build_script(
     # See comment associated with alias. Do not change this name
-    name = "async-trait_build_script",
+    name = "foundationdb-sys_build_script",
     srcs = glob(
         include = [
             "**/*.rs",
@@ -118,6 +117,8 @@ cargo_build_script(
         ],
     }),
     crate_features = [
+        "embedded-fdb-include",
+        "fdb-7_1",
     ],
     crate_name = "build_script_build",
     crate_root = "build.rs",
@@ -125,7 +126,7 @@ cargo_build_script(
         "//conditions:default": [
         ],
     }),
-    edition = "2018",
+    edition = "2021",
     proc_macro_deps = [
     ] + select_with_or({
         "//conditions:default": [
@@ -154,11 +155,12 @@ cargo_build_script(
         "//conditions:default": [
         ],
     }),
-    version = "0.1.57",
+    version = "0.7.0",
     visibility = ["//visibility:private"],
     deps = [
     ] + select_with_or({
         "//conditions:default": [
+            "@crates_vendor__bindgen-0.60.1//:bindgen",
         ],
     }),
 )
@@ -170,7 +172,7 @@ alias(
     # of `build_script_build` without losing out on having certain Cargo
     # environment variables set.
     name = "build_script_build",
-    actual = "async-trait_build_script",
+    actual = "foundationdb-sys_build_script",
     tags = [
         "manual",
     ],

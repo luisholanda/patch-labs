@@ -15,17 +15,17 @@ load(
 load("@rules_rust//crate_universe/private:selects.bzl", "select_with_or")
 load(
     "@rules_rust//rust:defs.bzl",
-    "rust_proc_macro",
+    "rust_library",
 )
 
 package(default_visibility = ["//visibility:public"])
 
 # licenses([
-#     "TODO",  # Apache-2.0 OR MIT
+#     "TODO",  # MIT OR Apache-2.0
 # ])
 
-rust_proc_macro(
-    name = "pin_project_internal",
+rust_library(
+    name = "futures_io",
     srcs = glob(
         include = [
             "**/*.rs",
@@ -50,6 +50,7 @@ rust_proc_macro(
         ],
     }),
     crate_features = [
+        "std",
     ],
     crate_root = "src/lib.rs",
     data = select_with_or({
@@ -81,13 +82,10 @@ rust_proc_macro(
         "noclippy",
         "norustfmt",
     ],
-    version = "1.0.12",
+    version = "0.3.24",
     deps = [
     ] + select_with_or({
         "//conditions:default": [
-            "@crates_vendor__proc-macro2-1.0.47//:proc_macro2",
-            "@crates_vendor__quote-1.0.21//:quote",
-            "@crates_vendor__syn-1.0.102//:syn",
         ],
     }),
 )

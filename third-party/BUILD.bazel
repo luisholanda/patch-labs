@@ -9,6 +9,11 @@ crates_vendor(
                 "uuid_unstable",
             ],
         )],
+        "foundationdb": [crate.annotation(
+            deps = [
+                "//third-party/foundationdb:libfdb",
+            ],
+        )],
     },
     cargo_lockfile = "//:Cargo.Bazel.lock",
     manifests = ["//:Cargo.toml"],

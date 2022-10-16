@@ -21,11 +21,11 @@ load(
 package(default_visibility = ["//visibility:public"])
 
 # licenses([
-#     "TODO",  # Apache-2.0 OR MIT
+#     "TODO",  # MIT OR Apache-2.0
 # ])
 
 rust_proc_macro(
-    name = "pin_project_internal",
+    name = "async_recursion",
     srcs = glob(
         include = [
             "**/*.rs",
@@ -81,7 +81,7 @@ rust_proc_macro(
         "noclippy",
         "norustfmt",
     ],
-    version = "1.0.12",
+    version = "1.0.0",
     deps = [
     ] + select_with_or({
         "//conditions:default": [

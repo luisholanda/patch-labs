@@ -1,0 +1,19 @@
+load("@bazel_skylib//rules:native_binary.bzl", "native_binary")
+load("@rules_cc//cc:defs.bzl", "cc_import")
+
+native_binary(
+    name = "fdbcli",
+    src = "@fdbcli//file",
+    out = "fdbcli",
+)
+
+native_binary(
+    name = "fdbserver",
+    src = "@fdbserver//file",
+    out = "fdbserver",
+)
+
+cc_import(
+    name = "libfdb",
+    shared_library = "@libfdb//file",
+)
