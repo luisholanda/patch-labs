@@ -4,7 +4,7 @@ package(default_visibility = ["//rust:__subpackages__"])
 
 pl_rust_library(
     name = "database",
-    srcs = glob(["*.rs"]),
+    srcs = glob(["lib.rs"]),
     # FIXME: add tests for this target
     create_test_target = False,
     proc_macro_deps = [
@@ -17,4 +17,10 @@ pl_rust_library(
         "//third-party/crates:prost",
         "//third-party/crates:sled",
     ],
+)
+
+pl_rust_library(
+    name = "error",
+    srcs = ["error.rs"],
+    create_test_target = False,
 )

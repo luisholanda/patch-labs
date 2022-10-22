@@ -25,11 +25,11 @@ load(
 package(default_visibility = ["//visibility:public"])
 
 # licenses([
-#     "TODO",  # MIT/Apache-2.0
+#     "TODO",  # MIT OR Apache-2.0
 # ])
 
 rust_library(
-    name = "winapi",
+    name = "crossbeam_epoch",
     srcs = glob(
         include = [
             "**/*.rs",
@@ -54,35 +54,16 @@ rust_library(
         ],
     }),
     crate_features = [
-        "accctrl",
-        "aclapi",
-        "consoleapi",
-        "errhandlingapi",
-        "fileapi",
-        "handleapi",
-        "libloaderapi",
-        "minwinbase",
-        "minwindef",
-        "namedpipeapi",
-        "ntsecapi",
-        "ntstatus",
-        "processenv",
-        "processthreadsapi",
+        "alloc",
+        "default",
         "std",
-        "winbase",
-        "wincon",
-        "winerror",
-        "winnt",
-        "ws2ipdef",
-        "ws2tcpip",
-        "wtypesbase",
     ],
     crate_root = "src/lib.rs",
     data = select_with_or({
         "//conditions:default": [
         ],
     }),
-    edition = "2015",
+    edition = "2018",
     proc_macro_deps = [
     ] + select_with_or({
         "//conditions:default": [
@@ -107,28 +88,22 @@ rust_library(
         "noclippy",
         "norustfmt",
     ],
-    version = "0.3.9",
+    version = "0.9.11",
     deps = [
     ] + select_with_or({
-        # i686-pc-windows-gnu
-        #
-        # No supported platform triples for cfg: 'i686-pc-windows-gnu'
-        # Skipped dependencies: [{"id":"winapi-i686-pc-windows-gnu 0.4.0","target":"winapi_i686_pc_windows_gnu"}]
-        #
-        # x86_64-pc-windows-gnu
-        #
-        # No supported platform triples for cfg: 'x86_64-pc-windows-gnu'
-        # Skipped dependencies: [{"id":"winapi-x86_64-pc-windows-gnu 0.4.0","target":"winapi_x86_64_pc_windows_gnu"}]
-        #
         "//conditions:default": [
-            "@crates_vendor__winapi-0.3.9//:build_script_build",
+            "@crates_vendor__cfg-if-1.0.0//:cfg_if",
+            "@crates_vendor__crossbeam-epoch-0.9.11//:build_script_build",
+            "@crates_vendor__crossbeam-utils-0.8.12//:crossbeam_utils",
+            "@crates_vendor__memoffset-0.6.5//:memoffset",
+            "@crates_vendor__scopeguard-1.1.0//:scopeguard",
         ],
     }),
 )
 
 cargo_build_script(
     # See comment associated with alias. Do not change this name
-    name = "winapi_build_script",
+    name = "crossbeam-epoch_build_script",
     srcs = glob(
         include = [
             "**/*.rs",
@@ -147,28 +122,9 @@ cargo_build_script(
         ],
     }),
     crate_features = [
-        "accctrl",
-        "aclapi",
-        "consoleapi",
-        "errhandlingapi",
-        "fileapi",
-        "handleapi",
-        "libloaderapi",
-        "minwinbase",
-        "minwindef",
-        "namedpipeapi",
-        "ntsecapi",
-        "ntstatus",
-        "processenv",
-        "processthreadsapi",
+        "alloc",
+        "default",
         "std",
-        "winbase",
-        "wincon",
-        "winerror",
-        "winnt",
-        "ws2ipdef",
-        "ws2tcpip",
-        "wtypesbase",
     ],
     crate_name = "build_script_build",
     crate_root = "build.rs",
@@ -176,7 +132,7 @@ cargo_build_script(
         "//conditions:default": [
         ],
     }),
-    edition = "2015",
+    edition = "2018",
     proc_macro_deps = [
     ] + select_with_or({
         "//conditions:default": [
@@ -205,11 +161,12 @@ cargo_build_script(
         "//conditions:default": [
         ],
     }),
-    version = "0.3.9",
+    version = "0.9.11",
     visibility = ["//visibility:private"],
     deps = [
     ] + select_with_or({
         "//conditions:default": [
+            "@crates_vendor__autocfg-1.1.0//:autocfg",
         ],
     }),
 )
@@ -221,7 +178,7 @@ alias(
     # of `build_script_build` without losing out on having certain Cargo
     # environment variables set.
     name = "build_script_build",
-    actual = "winapi_build_script",
+    actual = "crossbeam-epoch_build_script",
     tags = [
         "manual",
     ],

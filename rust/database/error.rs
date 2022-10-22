@@ -1,1 +1,27 @@
+use std::error::Error;
 
+pub type StorageError = Box<dyn Error + Send + Sync>;
+
+#[derive(Debug)]
+pub enum DbError<E> {
+    Abort(E),
+    Storage(StorageError),
+}
+
+#[doc(hidden)]
+#[derive(Debug)]
+pub enum Infallible {}
+
+pub type InfallibleDbResult<T> = Result<T, DbError<Infallible>>;
+
+impl<E> From<DbError<Infallible>> for DbError<E>
+where
+    E: Error,
+{
+    fn from(err: DbError<Infallible>) -> Self {
+        match err {
+            DbError::Abort(_) => unsafe { std::hint::unreachable_unchecked() },
+            DbError::Storage(err) => Self::Storage(err),
+        }
+    }
+}

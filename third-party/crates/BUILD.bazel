@@ -76,6 +76,12 @@ alias(
 )
 
 alias(
+    name = "sled",
+    actual = "@crates_vendor__sled-0.34.7//:sled",
+    tags = ["manual"],
+)
+
+alias(
     name = "smallvec",
     actual = "@crates_vendor__smallvec-1.10.0//:smallvec",
     tags = ["manual"],

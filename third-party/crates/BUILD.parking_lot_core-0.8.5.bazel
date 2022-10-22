@@ -25,11 +25,11 @@ load(
 package(default_visibility = ["//visibility:public"])
 
 # licenses([
-#     "TODO",  # MIT/Apache-2.0
+#     "TODO",  # Apache-2.0/MIT
 # ])
 
 rust_library(
-    name = "winapi",
+    name = "parking_lot_core",
     srcs = glob(
         include = [
             "**/*.rs",
@@ -54,35 +54,13 @@ rust_library(
         ],
     }),
     crate_features = [
-        "accctrl",
-        "aclapi",
-        "consoleapi",
-        "errhandlingapi",
-        "fileapi",
-        "handleapi",
-        "libloaderapi",
-        "minwinbase",
-        "minwindef",
-        "namedpipeapi",
-        "ntsecapi",
-        "ntstatus",
-        "processenv",
-        "processthreadsapi",
-        "std",
-        "winbase",
-        "wincon",
-        "winerror",
-        "winnt",
-        "ws2ipdef",
-        "ws2tcpip",
-        "wtypesbase",
     ],
     crate_root = "src/lib.rs",
     data = select_with_or({
         "//conditions:default": [
         ],
     }),
-    edition = "2015",
+    edition = "2018",
     proc_macro_deps = [
     ] + select_with_or({
         "//conditions:default": [
@@ -107,28 +85,71 @@ rust_library(
         "noclippy",
         "norustfmt",
     ],
-    version = "0.3.9",
+    version = "0.8.5",
     deps = [
     ] + select_with_or({
-        # i686-pc-windows-gnu
+        # cfg(target_os = "redox")
         #
-        # No supported platform triples for cfg: 'i686-pc-windows-gnu'
-        # Skipped dependencies: [{"id":"winapi-i686-pc-windows-gnu 0.4.0","target":"winapi_i686_pc_windows_gnu"}]
+        # No supported platform triples for cfg: 'cfg(target_os = "redox")'
+        # Skipped dependencies: [{"id":"redox_syscall 0.2.16","target":"syscall"}]
         #
-        # x86_64-pc-windows-gnu
-        #
-        # No supported platform triples for cfg: 'x86_64-pc-windows-gnu'
-        # Skipped dependencies: [{"id":"winapi-x86_64-pc-windows-gnu 0.4.0","target":"winapi_x86_64_pc_windows_gnu"}]
-        #
+        # cfg(unix)
+        (
+            "@rules_rust//rust/platform:aarch64-apple-darwin",
+            "@rules_rust//rust/platform:aarch64-apple-ios",
+            "@rules_rust//rust/platform:aarch64-apple-ios-sim",
+            "@rules_rust//rust/platform:aarch64-linux-android",
+            "@rules_rust//rust/platform:aarch64-unknown-linux-gnu",
+            "@rules_rust//rust/platform:arm-unknown-linux-gnueabi",
+            "@rules_rust//rust/platform:armv7-linux-androideabi",
+            "@rules_rust//rust/platform:armv7-unknown-linux-gnueabi",
+            "@rules_rust//rust/platform:i686-apple-darwin",
+            "@rules_rust//rust/platform:i686-linux-android",
+            "@rules_rust//rust/platform:i686-unknown-freebsd",
+            "@rules_rust//rust/platform:i686-unknown-linux-gnu",
+            "@rules_rust//rust/platform:powerpc-unknown-linux-gnu",
+            "@rules_rust//rust/platform:s390x-unknown-linux-gnu",
+            "@rules_rust//rust/platform:x86_64-apple-darwin",
+            "@rules_rust//rust/platform:x86_64-apple-ios",
+            "@rules_rust//rust/platform:x86_64-linux-android",
+            "@rules_rust//rust/platform:x86_64-unknown-freebsd",
+            "@rules_rust//rust/platform:x86_64-unknown-linux-gnu",
+        ): [
+            # Target Deps
+            "@crates_vendor__libc-0.2.135//:libc",
+
+            # Common Deps
+            "@crates_vendor__cfg-if-1.0.0//:cfg_if",
+            "@crates_vendor__instant-0.1.12//:instant",
+            "@crates_vendor__parking_lot_core-0.8.5//:build_script_build",
+            "@crates_vendor__smallvec-1.10.0//:smallvec",
+        ],
+        # cfg(windows)
+        (
+            "@rules_rust//rust/platform:i686-pc-windows-msvc",
+            "@rules_rust//rust/platform:x86_64-pc-windows-msvc",
+        ): [
+            # Target Deps
+            "@crates_vendor__winapi-0.3.9//:winapi",
+
+            # Common Deps
+            "@crates_vendor__cfg-if-1.0.0//:cfg_if",
+            "@crates_vendor__instant-0.1.12//:instant",
+            "@crates_vendor__parking_lot_core-0.8.5//:build_script_build",
+            "@crates_vendor__smallvec-1.10.0//:smallvec",
+        ],
         "//conditions:default": [
-            "@crates_vendor__winapi-0.3.9//:build_script_build",
+            "@crates_vendor__cfg-if-1.0.0//:cfg_if",
+            "@crates_vendor__instant-0.1.12//:instant",
+            "@crates_vendor__parking_lot_core-0.8.5//:build_script_build",
+            "@crates_vendor__smallvec-1.10.0//:smallvec",
         ],
     }),
 )
 
 cargo_build_script(
     # See comment associated with alias. Do not change this name
-    name = "winapi_build_script",
+    name = "parking_lot_core_build_script",
     srcs = glob(
         include = [
             "**/*.rs",
@@ -147,28 +168,6 @@ cargo_build_script(
         ],
     }),
     crate_features = [
-        "accctrl",
-        "aclapi",
-        "consoleapi",
-        "errhandlingapi",
-        "fileapi",
-        "handleapi",
-        "libloaderapi",
-        "minwinbase",
-        "minwindef",
-        "namedpipeapi",
-        "ntsecapi",
-        "ntstatus",
-        "processenv",
-        "processthreadsapi",
-        "std",
-        "winbase",
-        "wincon",
-        "winerror",
-        "winnt",
-        "ws2ipdef",
-        "ws2tcpip",
-        "wtypesbase",
     ],
     crate_name = "build_script_build",
     crate_root = "build.rs",
@@ -176,7 +175,7 @@ cargo_build_script(
         "//conditions:default": [
         ],
     }),
-    edition = "2015",
+    edition = "2018",
     proc_macro_deps = [
     ] + select_with_or({
         "//conditions:default": [
@@ -205,7 +204,7 @@ cargo_build_script(
         "//conditions:default": [
         ],
     }),
-    version = "0.3.9",
+    version = "0.8.5",
     visibility = ["//visibility:private"],
     deps = [
     ] + select_with_or({
@@ -221,7 +220,7 @@ alias(
     # of `build_script_build` without losing out on having certain Cargo
     # environment variables set.
     name = "build_script_build",
-    actual = "winapi_build_script",
+    actual = "parking_lot_core_build_script",
     tags = [
         "manual",
     ],

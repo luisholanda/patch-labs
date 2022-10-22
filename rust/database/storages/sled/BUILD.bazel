@@ -1,0 +1,15 @@
+load("//build/bazel/rust:library.bzl", "pl_rust_library")
+
+pl_rust_library(
+    name = "sled",
+    srcs = [
+        "lib.rs",
+        "transaction.rs",
+    ],
+    deps = [
+        "//rust/database:error",
+        "//third-party/crates:foundationdb",
+        "//third-party/crates:sled",
+        "//third-party/crates:tokio",
+    ],
+)
