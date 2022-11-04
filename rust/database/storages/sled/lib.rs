@@ -42,13 +42,9 @@ impl SledDatabase {
     /// Panics if an I/O error occurs while opening the database.
     #[cold]
     pub fn open(path: &Path) -> Self {
-        let db = Config::new()
-            .use_compression(true)
-            .path(path)
-            .open()
-            .unwrap_or_else(|err| {
-                panic!("failed to open sled database at {}:\n{err}", path.display())
-            });
+        let db = Config::new().path(path).open().unwrap_or_else(|err| {
+            panic!("failed to open sled database at {}:\n{err}", path.display())
+        });
 
         Self { db }
     }
@@ -63,7 +59,6 @@ impl SledDatabase {
     #[cold]
     pub fn temporary() -> Self {
         let db = Config::new()
-            .use_compression(true)
             .temporary(true)
             .create_new(true)
             .mode(sled::Mode::HighThroughput)
@@ -76,7 +71,7 @@ impl SledDatabase {
 }
 
 impl SledDatabase {
-    /// Executes an future inside a transaction.
+    /// Executes a future inside a transaction.
     ///
     /// The behavior of the transaction given as argument is the same
     /// as a FoundatioDB's transaction where all reads are snapshot reads,
@@ -84,15 +79,15 @@ impl SledDatabase {
     /// of Sled, as it is wasn't designed with this purpose in mind.
     pub async fn transaction<T, E, F, Fut>(&self, f: F) -> Result<T, E>
     where
-        F: Fn(&mut SledTransaction) -> Fut,
-        Fut: Future<Output = Result<T, DbError<E>>>,
+        F: Fn(SledTransaction) -> Fut,
+        Fut: Future<Output = Result<(T, SledTransaction), DbError<E>>>,
         E: From<StorageError> + std::error::Error,
     {
-        let mut tx = SledTransaction::new(&*self.db);
+        let tx = SledTransaction::new((*self.db).clone());
 
         // No sled error is transient, no need for retry.
         let fut = async {
-            let val = f(&mut tx).await?;
+            let (val, tx) = f(tx).await?;
 
             sled_res_to_db_res(tx.commit().await)?;
 

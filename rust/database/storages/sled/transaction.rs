@@ -9,14 +9,14 @@ use sled::{Batch, IVec, Tree};
 /// See [`SledDatabase::transaction`] for more info.
 ///
 /// [`SledDatabase::transaction`]: crate::SledDatabase::transaction
-pub struct SledTransaction<'d> {
-    tree: &'d Tree,
+pub struct SledTransaction {
+    tree: Tree,
     batch: HashMap<IVec, Option<IVec>>,
 }
 
 pub type SledRange<'t> = Box<dyn Iterator<Item = InfallibleDbResult<(IVec, IVec)>> + 't>;
 
-impl<'t> SledTransaction<'t> {
+impl SledTransaction {
     /// Get a value of a key from the tree.
     pub fn get(&self, key: &[u8]) -> InfallibleDbResult<Option<IVec>> {
         match self.batch.get(key) {
@@ -26,7 +26,7 @@ impl<'t> SledTransaction<'t> {
     }
 
     /// Get a range of key-value pairs given the query options.
-    pub fn get_range(&'t self, opts: &RangeOption<'_>) -> SledRange<'t> {
+    pub fn get_range<'t>(&'t self, opts: &RangeOption<'_>) -> SledRange<'t> {
         fn bound_from_selector<'s>(selector: &'s KeySelector<'s>) -> Bound<&'s [u8]> {
             if selector.or_equal() {
                 Bound::Included(selector.key())
@@ -79,7 +79,7 @@ impl<'t> SledTransaction<'t> {
         self.batch.insert(key.into(), None);
     }
 
-    pub(crate) fn new(tree: &'t Tree) -> Self {
+    pub(crate) fn new(tree: Tree) -> Self {
         Self {
             tree,
             batch: HashMap::default(),
@@ -126,7 +126,7 @@ mod tests {
         db.insert(b"foo/2", b"2").unwrap();
         db.insert(b"bar/1", b"1").unwrap();
 
-        let mut tx = SledTransaction::new(&*db);
+        let mut tx = SledTransaction::new((*db).clone());
 
         // Test get from the tree.
         let foo_1 = tx.get(b"foo/1").expect("failed to get foo/1");
@@ -173,7 +173,7 @@ mod tests {
         db.insert(b"foo/2", b"2").unwrap();
         db.insert(b"bar/1", b"1").unwrap();
 
-        let mut tx = SledTransaction::new(&*db);
+        let mut tx = SledTransaction::new((*db).clone());
 
         tx.set(b"bar/2", b"2");
         tx.clear(b"bar/1");

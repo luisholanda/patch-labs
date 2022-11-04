@@ -8,11 +8,13 @@ pub enum DbError<E> {
     Storage(StorageError),
 }
 
+pub type DbResult<T, E> = Result<T, DbError<E>>;
+
 #[doc(hidden)]
 #[derive(Debug)]
 pub enum Infallible {}
 
-pub type InfallibleDbResult<T> = Result<T, DbError<Infallible>>;
+pub type InfallibleDbResult<T> = DbResult<T, Infallible>;
 
 impl<E> From<DbError<Infallible>> for DbError<E>
 where

@@ -6,6 +6,7 @@ pl_rust_library(
         "lib.rs",
         "transaction.rs",
     ],
+    visibility = ["//rust/database:__pkg__"],
     deps = [
         "//rust/database:error",
         "//third-party/crates:foundationdb",
