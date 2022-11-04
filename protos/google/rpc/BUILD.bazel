@@ -1,0 +1,30 @@
+load("//build/bazel/proto:library.bzl", "pl_proto_library")
+load("//build/bazel/rust:proto.bzl", "pl_rust_proto_library")
+
+pl_proto_library(
+    name = "status_proto",
+    srcs = ["status.proto"],
+    disable_lint = True,
+    visibility = ["//protos:__subpackages__"],
+    deps = [
+        "@com_google_protobuf//:any_proto",
+    ],
+)
+
+pl_proto_library(
+    name = "error_details_proto",
+    srcs = ["error_details.proto"],
+    disable_lint = True,
+    visibility = ["//protos:__subpackages__"],
+    deps = [
+        "@com_google_protobuf//:duration_proto",
+    ],
+)
+
+pl_rust_proto_library(
+    name = "rpc_rust",
+    protos = [
+        ":error_details_proto",
+        ":status_proto",
+    ],
+)

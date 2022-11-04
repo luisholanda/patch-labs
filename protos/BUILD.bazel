@@ -7,6 +7,8 @@ buf_breaking_test(
     against = "testdata/image.bin",
     config = "buf.yaml",
     targets = [
+        "//protos/google/rpc:error_details_proto",
+        "//protos/google/rpc:status_proto",
         "//protos/pl/api:resource_name",
         "//protos/pl/auth/users/v1:service_proto",
         "//protos/pl/auth/users/v1:users_proto",

@@ -41,7 +41,7 @@ _pl_proto_library_proxy = rule(
     },
 )
 
-def pl_proto_library(name, rust_exposed_types = {}, **kwargs):
+def pl_proto_library(name, rust_exposed_types = {}, disable_lint = False, **kwargs):
     visibility = kwargs.pop("visibility", None)
     proto_lib_name = name + "-internal"
 
@@ -52,11 +52,12 @@ def pl_proto_library(name, rust_exposed_types = {}, **kwargs):
         **kwargs
     )
 
-    buf_lint_test(
-        name = name + "-lint",
-        targets = [proto_lib_name],
-        config = "//protos:buf.yaml",
-    )
+    if not disable_lint:
+        buf_lint_test(
+            name = name + "-lint",
+            targets = [proto_lib_name],
+            config = "//protos:buf.yaml",
+        )
 
     _pl_proto_library_proxy(
         name = name,

@@ -69,7 +69,7 @@ fn main() {
     let output = std::fs::File::create(&args.output_file).unwrap();
     let mut output = BufWriter::new(output);
 
-    for (path, buf) in buffers {
+    for buf in buffers.values() {
         output.write_all(buf.as_bytes()).unwrap();
     }
 

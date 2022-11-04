@@ -6,7 +6,8 @@ def pl_rust_proto_library(
         protos,
         deps = [],
         field_attributes = {},
-        type_attributes = {}):
+        type_attributes = {},
+        **kwargs):
     """Compile a list of `proto_library` into a Rust library.
 
     Args:
@@ -28,6 +29,7 @@ def pl_rust_proto_library(
         srcs = [name + "_pb"],
         deps = ["//third-party/crates:prost", "//third-party/crates:prost-types"] + deps,
         create_test_target = False,
+        **kwargs
     )
 
 def _dict_map_each(k):
@@ -52,7 +54,7 @@ def _gen_rust_proto_impl(ctx):
 
     args = ctx.actions.args()
     args.add(output_file)
-    args.add_all("--file-descriptor-sets", file_descriptor_sets)
+    args.add_all(file_descriptor_sets, before_each = "--file-descriptor-sets")
 
     for arg_name, d in {
         "--field-attributes": field_attributes,

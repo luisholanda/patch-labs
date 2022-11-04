@@ -61,6 +61,7 @@
             enable = true;
             name = "Breaking test targets check";
             description = "Breaking test depends on all our proto_library";
+            files = "\\.proto$";
             entry = let
               testScript = pkgs.writeScriptBin "breaking-test-targets-check" ''
                 #!/usr/bin/env bash
