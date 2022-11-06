@@ -158,3 +158,36 @@ impl Deref for IBytes {
 enum IBytesBuf {
     Embedded(IVec),
 }
+
+#[cfg(test)]
+mod tests {
+    use pl_api_status::{Status, StatusOr};
+
+    use super::*;
+
+    #[tokio::test]
+    async fn test_db() -> StatusOr<()> {
+        let db = Db::temporary();
+
+        db.transaction(|mut tx| {
+            Box::pin(async move {
+                tx.set(b"foo/1", b"1").await;
+                tx.set(b"foo/2", b"2").await;
+
+                Ok(((), tx)) as DbResult<_, Status>
+            })
+        })
+        .await?;
+
+        db.transaction(|tx| {
+            Box::pin(async move {
+                let b = tx.get(b"foo/1").await?;
+
+                assert_eq!(b.as_deref(), Some(b"1" as &[u8]));
+
+                Ok(((), tx)) as DbResult<_, Status>
+            })
+        })
+        .await
+    }
+}

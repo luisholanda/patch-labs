@@ -5,14 +5,13 @@ package(default_visibility = ["//rust:__subpackages__"])
 pl_rust_library(
     name = "database",
     srcs = glob(["lib.rs"]),
-    # TODO: add tests for this.
-    #
-    # Needs an error type that we can use in tests.
-    create_test_target = False,
     proc_macro_deps = [
         "//third-party/crates:async-trait",
     ],
-    test_deps = ["//third-party/crates:tokio"],
+    test_deps = [
+        "//rust/api:status",
+        "//third-party/crates:tokio",
+    ],
     deps = [
         ":error",
         "//rust/api:resource_name",
