@@ -10,3 +10,14 @@ pl_rust_library(
         "//third-party/crates:smallvec",
     ],
 )
+
+pl_rust_library(
+    name = "status",
+    srcs = ["status.rs"],
+    deps = [
+        "//protos/google/rpc:rpc_rust",
+        "//third-party/crates:prost",
+        "//third-party/crates:prost-types",
+        "//third-party/crates:tonic",
+    ],
+)

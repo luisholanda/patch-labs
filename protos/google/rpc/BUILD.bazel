@@ -27,4 +27,5 @@ pl_rust_proto_library(
         ":error_details_proto",
         ":status_proto",
     ],
+    visibility = ["//rust/api:__pkg__"],
 )
