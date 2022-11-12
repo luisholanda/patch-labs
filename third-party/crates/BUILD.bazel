@@ -35,7 +35,7 @@ alias(
 
 alias(
     name = "async-trait",
-    actual = "@crates_vendor__async-trait-0.1.57//:async_trait",
+    actual = "@crates_vendor__async-trait-0.1.58//:async_trait",
     tags = ["manual"],
 )
 
@@ -52,6 +52,12 @@ alias(
 )
 
 alias(
+    name = "futures-util",
+    actual = "@crates_vendor__futures-util-0.3.25//:futures_util",
+    tags = ["manual"],
+)
+
+alias(
     name = "mockall",
     actual = "@crates_vendor__mockall-0.10.2//:mockall",
     tags = ["manual"],
@@ -59,19 +65,19 @@ alias(
 
 alias(
     name = "prost",
-    actual = "@crates_vendor__prost-0.11.0//:prost",
+    actual = "@crates_vendor__prost-0.11.2//:prost",
     tags = ["manual"],
 )
 
 alias(
     name = "prost-build",
-    actual = "@crates_vendor__prost-build-0.11.1//:prost_build",
+    actual = "@crates_vendor__prost-build-0.11.2//:prost_build",
     tags = ["manual"],
 )
 
 alias(
     name = "prost-types",
-    actual = "@crates_vendor__prost-types-0.11.1//:prost_types",
+    actual = "@crates_vendor__prost-types-0.11.2//:prost_types",
     tags = ["manual"],
 )
 
@@ -120,13 +126,13 @@ alias(
 
 alias(
     name = "cc__gcc-shim",
-    actual = "@crates_vendor__cc-1.0.73//:gcc-shim__bin",
+    actual = "@crates_vendor__cc-1.0.76//:gcc-shim__bin",
     tags = ["manual"],
 )
 
 alias(
     name = "clap__stdio-fixture",
-    actual = "@crates_vendor__clap-3.2.22//:stdio-fixture__bin",
+    actual = "@crates_vendor__clap-3.2.23//:stdio-fixture__bin",
     tags = ["manual"],
 )
 

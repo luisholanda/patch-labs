@@ -5,6 +5,7 @@ members = []
 argh = "0.1.8"
 async-trait = "0.1.51"
 bytes = "1.2.1"
+futures-util = "0.3.25"
 prost = "0.11.0"
 prost-build = "0.11.1"
 prost-types = "0.11.1"

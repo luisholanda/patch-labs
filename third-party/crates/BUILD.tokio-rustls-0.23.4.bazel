@@ -88,7 +88,7 @@ rust_library(
     deps = [
     ] + select_with_or({
         "//conditions:default": [
-            "@crates_vendor__rustls-0.20.6//:rustls",
+            "@crates_vendor__rustls-0.20.7//:rustls",
             "@crates_vendor__tokio-1.21.2//:tokio",
             "@crates_vendor__webpki-0.22.0//:webpki",
         ],

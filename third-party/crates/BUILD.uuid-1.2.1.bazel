@@ -96,7 +96,7 @@ rust_library(
     ] + select_with_or({
         "//conditions:default": [
             "@crates_vendor__atomic-0.5.1//:atomic",
-            "@crates_vendor__getrandom-0.2.7//:getrandom",
+            "@crates_vendor__getrandom-0.2.8//:getrandom",
         ],
     }),
 )

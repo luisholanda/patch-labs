@@ -90,15 +90,15 @@ rust_library(
             "@rules_rust//rust/platform:x86_64-pc-windows-msvc",
         ): [
             # Target Deps
-            "@crates_vendor__once_cell-1.15.0//:once_cell",
+            "@crates_vendor__once_cell-1.16.0//:once_cell",
 
             # Common Deps
             "@crates_vendor__either-1.8.0//:either",
-            "@crates_vendor__libc-0.2.135//:libc",
+            "@crates_vendor__libc-0.2.137//:libc",
         ],
         "//conditions:default": [
             "@crates_vendor__either-1.8.0//:either",
-            "@crates_vendor__libc-0.2.135//:libc",
+            "@crates_vendor__libc-0.2.137//:libc",
         ],
     }),
 )

@@ -85,7 +85,7 @@ rust_library(
     deps = [
     ] + select_with_or({
         "//conditions:default": [
-            "@crates_vendor__base64-0.13.0//:base64",
+            "@crates_vendor__base64-0.13.1//:base64",
         ],
     }),
 )

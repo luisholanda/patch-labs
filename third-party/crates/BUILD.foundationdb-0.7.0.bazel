@@ -67,7 +67,7 @@ rust_library(
     ] + select_with_or({
         "//conditions:default": [
             "@crates_vendor__async-recursion-1.0.0//:async_recursion",
-            "@crates_vendor__async-trait-0.1.57//:async_trait",
+            "@crates_vendor__async-trait-0.1.58//:async_trait",
             "@crates_vendor__foundationdb-macros-0.1.1//:foundationdb_macros",
         ],
     }),
@@ -97,7 +97,7 @@ rust_library(
         "//conditions:default": [
             "@crates_vendor__foundationdb-0.7.0//:build_script_build",
             "@crates_vendor__foundationdb-sys-0.7.0//:foundationdb_sys",
-            "@crates_vendor__futures-0.3.24//:futures",
+            "@crates_vendor__futures-0.3.25//:futures",
             "@crates_vendor__memchr-2.5.0//:memchr",
             "@crates_vendor__rand-0.8.5//:rand",
             "@crates_vendor__static_assertions-1.1.0//:static_assertions",

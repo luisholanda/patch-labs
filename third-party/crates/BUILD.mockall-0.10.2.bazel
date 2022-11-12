@@ -88,10 +88,10 @@ rust_library(
         "//conditions:default": [
             "@crates_vendor__cfg-if-1.0.0//:cfg_if",
             "@crates_vendor__downcast-0.10.0//:downcast",
-            "@crates_vendor__fragile-1.2.1//:fragile",
+            "@crates_vendor__fragile-1.2.2//:fragile",
             "@crates_vendor__lazy_static-1.4.0//:lazy_static",
             "@crates_vendor__predicates-1.0.8//:predicates",
-            "@crates_vendor__predicates-tree-1.0.5//:predicates_tree",
+            "@crates_vendor__predicates-tree-1.0.6//:predicates_tree",
         ],
     }),
 )

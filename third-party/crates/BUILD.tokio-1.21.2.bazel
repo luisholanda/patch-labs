@@ -135,7 +135,7 @@ rust_library(
             # Common Deps
             "@crates_vendor__bytes-1.2.1//:bytes",
             "@crates_vendor__memchr-2.5.0//:memchr",
-            "@crates_vendor__mio-0.8.4//:mio",
+            "@crates_vendor__mio-0.8.5//:mio",
             "@crates_vendor__pin-project-lite-0.2.9//:pin_project_lite",
             "@crates_vendor__tokio-1.21.2//:build_script_build",
         ],
@@ -162,12 +162,12 @@ rust_library(
             "@rules_rust//rust/platform:x86_64-unknown-linux-gnu",
         ): [
             # Target Deps
-            "@crates_vendor__libc-0.2.135//:libc",
+            "@crates_vendor__libc-0.2.137//:libc",
 
             # Common Deps
             "@crates_vendor__bytes-1.2.1//:bytes",
             "@crates_vendor__memchr-2.5.0//:memchr",
-            "@crates_vendor__mio-0.8.4//:mio",
+            "@crates_vendor__mio-0.8.5//:mio",
             "@crates_vendor__pin-project-lite-0.2.9//:pin_project_lite",
             "@crates_vendor__tokio-1.21.2//:build_script_build",
         ],
@@ -182,14 +182,14 @@ rust_library(
             # Common Deps
             "@crates_vendor__bytes-1.2.1//:bytes",
             "@crates_vendor__memchr-2.5.0//:memchr",
-            "@crates_vendor__mio-0.8.4//:mio",
+            "@crates_vendor__mio-0.8.5//:mio",
             "@crates_vendor__pin-project-lite-0.2.9//:pin_project_lite",
             "@crates_vendor__tokio-1.21.2//:build_script_build",
         ],
         "//conditions:default": [
             "@crates_vendor__bytes-1.2.1//:bytes",
             "@crates_vendor__memchr-2.5.0//:memchr",
-            "@crates_vendor__mio-0.8.4//:mio",
+            "@crates_vendor__mio-0.8.5//:mio",
             "@crates_vendor__pin-project-lite-0.2.9//:pin_project_lite",
             "@crates_vendor__tokio-1.21.2//:build_script_build",
         ],

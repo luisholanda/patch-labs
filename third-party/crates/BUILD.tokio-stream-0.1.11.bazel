@@ -87,7 +87,7 @@ rust_library(
     deps = [
     ] + select_with_or({
         "//conditions:default": [
-            "@crates_vendor__futures-core-0.3.24//:futures_core",
+            "@crates_vendor__futures-core-0.3.25//:futures_core",
             "@crates_vendor__pin-project-lite-0.2.9//:pin_project_lite",
             "@crates_vendor__tokio-1.21.2//:tokio",
         ],

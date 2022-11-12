@@ -91,9 +91,9 @@ rust_library(
         "//conditions:default": [
             "@crates_vendor__prettyplease-0.1.21//:prettyplease",
             "@crates_vendor__proc-macro2-1.0.47//:proc_macro2",
-            "@crates_vendor__prost-build-0.11.1//:prost_build",
+            "@crates_vendor__prost-build-0.11.2//:prost_build",
             "@crates_vendor__quote-1.0.21//:quote",
-            "@crates_vendor__syn-1.0.102//:syn",
+            "@crates_vendor__syn-1.0.103//:syn",
         ],
     }),
 )

@@ -93,8 +93,8 @@ rust_library(
             "@crates_vendor__difference-2.0.0//:difference",
             "@crates_vendor__float-cmp-0.8.0//:float_cmp",
             "@crates_vendor__normalize-line-endings-0.3.0//:normalize_line_endings",
-            "@crates_vendor__predicates-core-1.0.3//:predicates_core",
-            "@crates_vendor__regex-1.6.0//:regex",
+            "@crates_vendor__predicates-core-1.0.4//:predicates_core",
+            "@crates_vendor__regex-1.7.0//:regex",
         ],
     }),
 )

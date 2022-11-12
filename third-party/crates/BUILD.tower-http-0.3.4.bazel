@@ -91,8 +91,8 @@ rust_library(
         "//conditions:default": [
             "@crates_vendor__bitflags-1.3.2//:bitflags",
             "@crates_vendor__bytes-1.2.1//:bytes",
-            "@crates_vendor__futures-core-0.3.24//:futures_core",
-            "@crates_vendor__futures-util-0.3.24//:futures_util",
+            "@crates_vendor__futures-core-0.3.25//:futures_core",
+            "@crates_vendor__futures-util-0.3.25//:futures_util",
             "@crates_vendor__http-0.2.8//:http",
             "@crates_vendor__http-body-0.4.5//:http_body",
             "@crates_vendor__http-range-header-0.3.0//:http_range_header",

@@ -1,6 +1,6 @@
 use std::error::Error;
 
-pub type StorageError = Box<dyn Error + Send + Sync>;
+pub type StorageError = Box<dyn Error + Send + Sync + 'static>;
 
 #[derive(Debug)]
 pub enum DbError<E> {

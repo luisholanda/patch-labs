@@ -85,7 +85,7 @@ rust_library(
     deps = [
     ] + select_with_or({
         "//conditions:default": [
-            "@crates_vendor__hyper-0.14.20//:hyper",
+            "@crates_vendor__hyper-0.14.23//:hyper",
             "@crates_vendor__pin-project-lite-0.2.9//:pin_project_lite",
             "@crates_vendor__tokio-1.21.2//:tokio",
             "@crates_vendor__tokio-io-timeout-1.2.0//:tokio_io_timeout",
