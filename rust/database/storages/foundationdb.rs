@@ -65,10 +65,10 @@ impl FdbDatabase {
     /// This function returns an error if the closure returns an abort
     /// error, if we fail the transaction more than we can retry or if
     /// the FoundationDB API returns a non-retryable error.
-    pub async fn transact<F, T, E, Fut>(&self, f: F) -> DbResult<T, E>
+    pub async fn transact<F, T, E, Fut>(&self, f: F) -> Result<T, E>
     where
         F: Fn(FdbTransaction) -> Fut,
-        Fut: Future<Output = (DbResult<T, E>, FdbTransaction)>,
+        Fut: Future<Output = DbResult<(T, FdbTransaction), E>>,
         E: From<StorageError> + std::error::Error,
     {
         // Reimplement the loop of foundationdb::Database::transact to prevent
@@ -87,9 +87,7 @@ impl FdbDatabase {
         // as retries are common when using FDB. The loop thus can use this mechanism to
         // handle most errors.
 
-        let to_db_error = fdb_error_to_db_error::<E>;
-
-        let mut tx = self.db.create_trx().map_err(to_db_error)?;
+        let to_db_error = fdb_error_to_error::<E>;
 
         let mut remaining_tries = Self::DEFAULT_RETRY_LIMIT;
         let mut can_retry = || {
@@ -97,12 +95,12 @@ impl FdbDatabase {
             remaining_tries > 0
         };
 
+        let mut tx = Some(self.db.create_trx().map_err(to_db_error)?);
         loop {
-            let (res, FdbTransaction(rtx)) = f(FdbTransaction(tx)).await;
-            tx = rtx;
+            let res = f(FdbTransaction(tx.take().unwrap())).await;
 
             match res {
-                Ok(val) => match tx.commit().await {
+                Ok((val, FdbTransaction(fdb_tx))) => match fdb_tx.commit().await {
                     Ok(_) => break Ok(val),
                     // The commit returned an error, this MAY indicate that we need
                     // to retry the transaction, but we could also be in an unknown
@@ -111,16 +109,16 @@ impl FdbDatabase {
                         // Here the original loop checks for is_idempotent || !err.is_maybe_committed().
                         // As we assume all of our transactions are idempotent, we can skip the check.
                         if can_retry() {
-                            tx = err.on_error().await.map_err(to_db_error)?;
+                            tx = Some(err.on_error().await.map_err(to_db_error)?);
                         } else {
-                            break Err(fdb_error_to_db_error(err.into()));
+                            break Err(fdb_error_to_error(err.into()));
                         }
                     }
                 },
                 // The user asked us to abort the transaction.
                 // We don't need to rollback it manually, the Drop impl for tx
                 // takes care of dispatching the rollback.
-                Err(DbError::Abort(err)) => break Err(DbError::Abort(err)),
+                Err(DbError::Abort(err)) => break Err(err),
                 Err(DbError::Storage(err)) => {
                     let fdb_err = err
                         .downcast::<FdbError>()
@@ -129,9 +127,17 @@ impl FdbDatabase {
                     // Here the original loop checks for is_idempotent || !err.is_maybe_committed().
                     // As we assume all of our transactions are idempotent, we can skip the check.
                     if can_retry() {
-                        tx = tx.on_error(*fdb_err).await.map_err(to_db_error)?;
+                        let new_tx = self
+                            .db
+                            .create_trx()
+                            .map_err(to_db_error)?
+                            .on_error(*fdb_err)
+                            .await
+                            .map_err(to_db_error)?;
+
+                        tx = Some(new_tx);
                     } else {
-                        break Err(DbError::Storage(fdb_err));
+                        break Err((fdb_err as StorageError).into());
                     }
                 }
             }
@@ -193,6 +199,13 @@ impl FdbTransaction {
 
 fn fdb_error_to_db_error<E>(err: FdbError) -> DbError<E> {
     DbError::Storage(Box::new(err))
+}
+
+fn fdb_error_to_error<E>(err: FdbError) -> E
+where
+    E: From<StorageError>,
+{
+    (Box::new(err) as StorageError).into()
 }
 
 // TODO(fdb): write tests for this crate after we write fdb infrastructure.

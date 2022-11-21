@@ -15,9 +15,11 @@ pl_rust_library(
     deps = [
         ":error",
         "//rust/api:resource_name",
+        "//rust/database/storages:foundationdb",
         "//rust/database/storages/sled",
         "//third-party/crates:bytes",
         "//third-party/crates:foundationdb",
+        "//third-party/crates:futures-util",
         "//third-party/crates:prost",
         "//third-party/crates:sled",
     ],

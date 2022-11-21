@@ -1,9 +1,13 @@
 use std::{future::Future, ops::Deref, path::Path};
 
-use foundationdb::RangeOption;
-use pl_database_error::{DbResult, InfallibleDbResult, StorageError};
+use foundationdb::{future::FdbSlice, RangeOption};
+use futures_util::TryStreamExt;
+use pl_database_error::StorageError;
+use pl_database_storages_foundationdb::{FdbDatabase, FdbTransaction};
 use pl_database_storages_sled::{SledDatabase, SledTransaction};
 use sled::IVec;
+
+pub use pl_database_error::{DbError, DbResult, InfallibleDbResult};
 
 /// An abstract key-value database.
 ///
@@ -13,6 +17,7 @@ pub struct Db(DbInner);
 
 enum DbInner {
     Embedded(SledDatabase),
+    Fdb(FdbDatabase),
 }
 
 impl Db {
@@ -34,6 +39,24 @@ impl Db {
     pub fn temporary() -> Self {
         Self(DbInner::Embedded(SledDatabase::temporary()))
     }
+
+    /// Opens a database connected to a FoundationDB cluster.
+    ///
+    /// Configure how to connect to the cluster via the `FDB_*` environment
+    /// variables.
+    ///
+    /// # Safety
+    ///
+    /// This function MUST only be called once per program execution. Multiple
+    /// calls to the function may result in undefined behavior.
+    ///
+    /// Callers must ensure that the database instance is dropped before exiting
+    /// the program.
+    pub unsafe fn foundation() -> Self {
+        let fdb = unsafe { FdbDatabase::new() };
+
+        Self(DbInner::Fdb(fdb))
+    }
 }
 
 impl Db {
@@ -51,18 +74,31 @@ impl Db {
             DbInner::Embedded(sled_db) => {
                 sled_db
                     .transaction(move |tx| {
-                        let tx = Tx(TxInner::Embedded(tx));
-                        let fut = f(tx);
+                        let fut = f(Tx(TxInner::Embedded(tx)));
 
                         async move {
-                            let (val, tx) = fut.await?;
+                            let (val, Tx(TxInner::Embedded(tx))) = fut.await? else {
+                                unreachable!("invalid transaction type in sled database");
+                            };
 
-                            match tx.0 {
-                                TxInner::Embedded(tx) => Ok((val, tx)),
-                            }
+                            Ok((val, tx))
                         }
                     })
                     .await
+            }
+            DbInner::Fdb(fdb) => {
+                fdb.transact(move |tx| {
+                    let fut = f(Tx(TxInner::Fdb(tx)));
+
+                    async move {
+                        let (val, Tx(TxInner::Fdb(tx))) = fut.await? else {
+                            unreachable!("invalid transaction type in fdb database");
+                        };
+
+                        Ok((val, tx))
+                    }
+                })
+                .await
             }
         }
     }
@@ -78,60 +114,145 @@ pub struct Tx(TxInner);
 
 enum TxInner {
     Embedded(SledTransaction),
+    Fdb(FdbTransaction),
 }
 
 impl Tx {
     /// Get a value of a key from the database and pass it to the given closure.
-    ///
-    /// We pass the value via closure to prevent having to copy the bytes returned
-    /// by the storage into a temporary buffer. Layers are responsible to implement
-    /// the correct decoding.
     pub async fn get(&self, key: &[u8]) -> InfallibleDbResult<Option<IBytes>> {
-        match &self.0 {
-            TxInner::Embedded(sled_tx) => {
-                let Some(bytes) = sled_tx.get(key)? else {
-                    return Ok(None)
-                };
+        let bytes = match &self.0 {
+            TxInner::Embedded(sled_tx) => sled_tx.get(key)?.map(IBytes::embedded),
+            TxInner::Fdb(fdb_tx) => fdb_tx.get(key).await?.map(IBytes::foundation),
+        };
 
-                Ok(Some(IBytes::embedded(bytes)))
-            }
+        Ok(bytes)
+    }
+
+    pub async fn for_each_in_range<F, E, Fut>(&self, opts: RangeOption<'_>, f: F) -> DbResult<(), E>
+    where
+        F: FnMut(&[u8], &[u8]) -> Fut,
+        Fut: Future<Output = DbResult<bool, E>>,
+        E: std::error::Error,
+    {
+        match &self.0 {
+            TxInner::Embedded(sled_tx) => Self::sled_for_each_in_range(sled_tx, &opts, f).await,
+            TxInner::Fdb(fdb_tx) => Self::fdb_for_each_in_range(fdb_tx, opts, f).await,
         }
     }
 
-    /// Get a range of key value pairs given the query options.
-    ///
-    /// Same as [`Tx::get`], we pass a closure to prevent having to copy the storage's bytes.
-    pub async fn get_range<'b>(
-        &'b self,
+    async fn sled_for_each_in_range<F, E, Fut>(
+        sled_tx: &SledTransaction,
         opts: &RangeOption<'_>,
-    ) -> Box<dyn Iterator<Item = InfallibleDbResult<(IBytes, IBytes)>> + 'b> {
-        match &self.0 {
-            TxInner::Embedded(sled_tx) => {
-                let range = sled_tx.get_range(opts);
-                let kvs = range
-                    .map(move |res| res.map(|(k, v)| (IBytes::embedded(k), IBytes::embedded(v))));
+        mut f: F,
+    ) -> DbResult<(), E>
+    where
+        F: FnMut(&[u8], &[u8]) -> Fut,
+        Fut: Future<Output = DbResult<bool, E>>,
+        E: std::error::Error,
+    {
+        let range = sled_tx.get_range(opts);
 
-                Box::new(kvs)
+        for next in range {
+            let (key, value) = next?;
+            if !f(&key, &value).await? {
+                break;
             }
         }
+
+        Ok(())
+    }
+
+    async fn fdb_for_each_in_range<F, E, Fut>(
+        fdb_tx: &FdbTransaction,
+        opts: RangeOption<'_>,
+        mut f: F,
+    ) -> DbResult<(), E>
+    where
+        F: FnMut(&[u8], &[u8]) -> Fut,
+        Fut: Future<Output = DbResult<bool, E>>,
+        E: std::error::Error,
+    {
+        use futures_util::future::{poll_fn, try_maybe_done, FusedFuture, FutureExt};
+        use std::task::Poll;
+
+        let mut stream = fdb_tx.get_range(opts);
+
+        let mut curr = stream.try_next().await?;
+
+        // Given that each key-value iteration may take arbitrary long time,
+        // and assuming most executions will iterate over most part of the range,
+        // it would be better to start fetching the next chunk as soon as we start
+        // processing the current one. The poll_fn closure implements this logic.
+        while let Some(values) = curr.take() {
+            let mut get_next_chunk = stream.try_next();
+
+            // Move values to inside process_curr_chunk to decrease change of having
+            // multiple chunks in memory at once.
+            let f_ref = &mut f;
+            let process_curr_chunk = try_maybe_done(async move {
+                for kv in values {
+                    if !f_ref(kv.key(), kv.value()).await? {
+                        return Ok(false);
+                    }
+                }
+
+                Ok(true) as DbResult<bool, E>
+            });
+
+            futures_util::pin_mut!(process_curr_chunk);
+
+            poll_fn(|cx| {
+                // First, try poll current chunk processing. It will tell us if we
+                // need to continue polling the next chunk.
+                if !process_curr_chunk.is_terminated() {
+                    // The result of poll doesn't matter, we only use the TryMaybeDone interface.
+                    let _ = process_curr_chunk.poll_unpin(cx)?;
+                }
+
+                // We're still processing the current chunk, or we know we should continue
+                // into the next one.
+                if matches!(
+                    process_curr_chunk.as_mut().output_mut().copied(),
+                    None | Some(true)
+                ) {
+                    // XXX: What we should do in case this fails?
+                    //
+                    // The caller may or may not use this chunk, meaning that
+                    // failing the entire loop due to this error doesn't make
+                    // much sense.
+                    curr = std::task::ready!(get_next_chunk.poll_unpin(cx))?;
+
+                    if !process_curr_chunk.is_terminated() {
+                        return Poll::Pending;
+                    }
+                }
+
+                Poll::Ready(Ok(())) as Poll<DbResult<_, E>>
+            })
+            .await?;
+        }
+
+        Ok(())
     }
 
     /// Set a value of a given key.
     ///
     /// If the key wasn't present in the database, it will be added. If it was, its
     /// value will be replaced.
-    pub async fn set(&mut self, key: &[u8], value: &[u8]) {
+    pub fn set(&mut self, key: &[u8], value: &[u8]) {
         match &mut self.0 {
             TxInner::Embedded(sled_tx) => sled_tx.set(key, value),
+            TxInner::Fdb(fdb_tx) => fdb_tx.set(key, value),
         }
     }
 
     /// Clear a key from the database.
     ///
     /// If the key didn't exist, nothing will be done.
-    pub async fn clear(&mut self, key: &[u8]) {
+    pub fn clear(&mut self, key: &[u8]) {
         match &mut self.0 {
             TxInner::Embedded(sled_tx) => sled_tx.clear(key),
+            TxInner::Fdb(fdb_tx) => fdb_tx.clear(key),
         }
     }
 }
@@ -143,6 +264,10 @@ impl IBytes {
     fn embedded(bytes: IVec) -> Self {
         Self(IBytesBuf::Embedded(bytes))
     }
+
+    fn foundation(bytes: FdbSlice) -> Self {
+        Self(IBytesBuf::Fdb(bytes))
+    }
 }
 
 impl Deref for IBytes {
@@ -151,12 +276,14 @@ impl Deref for IBytes {
     fn deref(&self) -> &Self::Target {
         match &self.0 {
             IBytesBuf::Embedded(b) => b,
+            IBytesBuf::Fdb(b) => b,
         }
     }
 }
 
 enum IBytesBuf {
     Embedded(IVec),
+    Fdb(FdbSlice),
 }
 
 #[cfg(test)]
@@ -171,8 +298,8 @@ mod tests {
 
         db.transaction(|mut tx| {
             Box::pin(async move {
-                tx.set(b"foo/1", b"1").await;
-                tx.set(b"foo/2", b"2").await;
+                tx.set(b"foo/1", b"1");
+                tx.set(b"foo/2", b"2");
 
                 Ok(((), tx)) as DbResult<_, Status>
             })

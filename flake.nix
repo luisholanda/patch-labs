@@ -139,7 +139,7 @@
           };
         };
 
-        packages = pkgs: with pkgs; [bazel_5 jdk11 zlib bazel-watcher];
+        packages = pkgs: with pkgs; [bazel_5 jdk11 zlib bazel-watcher libxcrypt git];
 
         startup.pre-commit = pre-commit-check.shellHook;
       };
