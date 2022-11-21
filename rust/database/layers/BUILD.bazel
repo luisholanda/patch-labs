@@ -1,0 +1,11 @@
+load("//build/bazel/rust:library.bzl", "pl_rust_library")
+
+pl_rust_library(
+    name = "collection",
+    srcs = ["collection.rs"],
+    deps = [
+        "//rust/database",
+        "//third-party/crates:foundationdb",
+        "//third-party/crates:prost",
+    ],
+)
