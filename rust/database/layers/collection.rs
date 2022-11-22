@@ -1,11 +1,14 @@
-use std::marker::PhantomData;
+use std::{io, marker::PhantomData};
 
 use foundationdb::{
     tuple::{Subspace, TuplePack},
     RangeOption,
 };
 use pl_database::{DbError, DbResult, Tx};
-use prost::{DecodeError, Message};
+use prost::Message;
+
+/// V1 metadata: protobuf encoded, no extra transformations done.
+const V1_METADATA: u8 = 0;
 
 pub struct Collection<E> {
     subspace: Subspace,
@@ -46,7 +49,7 @@ where
     /// decode the database value into an instance of `E`. Note that, as we use protocol
     /// buffers for the encoding, the later can be prevented by not making wire incompatible
     /// changes to the entity.
-    pub async fn get(&self, tx: &Tx, key: &impl TuplePack) -> DbResult<Option<E>, DecodeError> {
+    pub async fn get(&self, tx: &Tx, key: &impl TuplePack) -> DbResult<Option<E>, io::Error> {
         let key = self.subspace.pack(key);
         let Some(bytes) = tx.get(&key).await? else {
             return Ok(None);
@@ -66,7 +69,7 @@ where
         &self,
         tx: &'t Tx,
         opts: RangeOption<'_>,
-    ) -> DbResult<Vec<E>, DecodeError> {
+    ) -> DbResult<Vec<E>, io::Error> {
         let mut range_elems = vec![];
 
         tx.for_each_in_range(opts, |_, value| {
@@ -87,7 +90,11 @@ where
 
     /// Set the value of a specific key.
     pub async fn set(&self, tx: &mut Tx, key: &impl TuplePack, value: &E) {
-        let bytes = value.encode_to_vec();
+        // Add extra byte for encoded value metadata.
+        let mut bytes = Vec::with_capacity(value.encoded_len() + 1);
+        bytes.push(V1_METADATA);
+        value.encode_raw(&mut bytes);
+
         let key = self.subspace.pack(key);
 
         tx.set(&key, &bytes)
@@ -101,9 +108,20 @@ where
     }
 }
 
-fn decode_to_entity<E>(bytes: &[u8]) -> DbResult<E, DecodeError>
+fn decode_to_entity<E>(bytes: &[u8]) -> DbResult<E, io::Error>
 where
     E: Message + Default,
 {
-    E::decode(bytes).map_err(DbError::Abort)
+    // The first byte from a collection-stored value is always present and
+    // represents the encoding metadata.
+    let metadata_byte = bytes[0];
+
+    if metadata_byte == V1_METADATA {
+        E::decode(&bytes[1..]).map_err(|err| DbError::Abort(err.into()))
+    } else {
+        Err(DbError::Abort(io::Error::new(
+            io::ErrorKind::InvalidData,
+            "invalid metadata byte from database!",
+        )))
+    }
 }
