@@ -70,7 +70,7 @@ where
         tx: &'t Tx,
         opts: RangeOption<'_>,
     ) -> DbResult<Vec<E>, io::Error> {
-        let mut range_elems = vec![];
+        let mut range_elems = opts.limit.map_or_else(Vec::new, Vec::with_capacity);
 
         tx.for_each_in_range(opts, |_, value| {
             let res = decode_to_entity::<E>(value);
@@ -89,7 +89,7 @@ where
     }
 
     /// Set the value of a specific key.
-    pub async fn set(&self, tx: &mut Tx, key: &impl TuplePack, value: &E) {
+    pub fn set(&self, tx: &mut Tx, key: &impl TuplePack, value: &E) {
         // Add extra byte for encoded value metadata.
         let mut bytes = Vec::with_capacity(value.encoded_len() + 1);
         bytes.push(V1_METADATA);
@@ -101,7 +101,7 @@ where
     }
 
     /// Clear a specific value from the collection.
-    pub async fn clear(&self, tx: &mut Tx, key: &impl TuplePack) {
+    pub fn clear(&self, tx: &mut Tx, key: &impl TuplePack) {
         let key = self.subspace.pack(key);
 
         tx.clear(&key)
