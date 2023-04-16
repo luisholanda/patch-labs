@@ -1,16 +1,13 @@
 workspace(name = "patch-labs")
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 # Configure Rust support
 http_archive(
     name = "rules_rust",
-    sha256 = "0cc7e6b39e492710b819e00d48f2210ae626b717a3ab96e048c43ab57e61d204",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_rust/releases/download/0.10.0/rules_rust-v0.10.0.tar.gz",
-        "https://github.com/bazelbuild/rules_rust/releases/download/0.10.0/rules_rust-v0.10.0.tar.gz",
-    ],
+    sha256 = "950a3ad4166ae60c8ccd628d1a8e64396106e7f98361ebe91b0bcfe60d8e4b60",
+    urls = ["https://github.com/bazelbuild/rules_rust/releases/download/0.20.0/rules_rust-v0.20.0.tar.gz"],
 )
 
 load("@rules_rust//rust:repositories.bzl", "rules_rust_dependencies", "rust_register_toolchains")
@@ -19,8 +16,7 @@ rules_rust_dependencies()
 
 rust_register_toolchains(
     edition = "2021",
-    include_rustc_srcs = True,
-    version = "1.65.0",
+    versions = ["1.68.2"],
 )
 
 load("@rules_rust//tools/rust_analyzer:deps.bzl", "rust_analyzer_dependencies")
@@ -39,11 +35,9 @@ crate_repositories()
 #  Nix Setup  #
 ###############
 
-load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
-
 git_repository(
     name = "rules_nixpkgs",
-    commit = "a64a1b2faae2c36ae34bbf4f17eb52317c48a83d",
+    commit = "f80a3b5bd19efa353638cdb0236f6a951cac02b7",
     remote = "https://github.com/tweag/rules_nixpkgs.git",
     shallow_since = "1663761031 +0000",
 )
@@ -56,6 +50,7 @@ rules_nixpkgs_dependencies(rules_nixpkgs_name = "rules_nixpkgs")
 load(
     "@rules_nixpkgs//nixpkgs:nixpkgs.bzl",
     "nixpkgs_local_repository",
+    "nixpkgs_package",
 )
 
 # Use the same Nixpkgs as the flake.
@@ -81,7 +76,6 @@ nixpkgs_local_repository(
 #################
 
 load("@rules_nixpkgs//toolchains/cc:cc.bzl", "nixpkgs_cc_configure")
-load("@rules_nixpkgs//nixpkgs:nixpkgs.bzl", "nixpkgs_package")
 
 nixpkgs_cc_configure(
     attribute_path = "clang_14",
@@ -133,10 +127,10 @@ cc_import(
 
 http_archive(
     name = "rules_proto",
-    sha256 = "e017528fd1c91c5a33f15493e3a398181a9e821a804eb7ff5acdd1d2d6c2b18d",
-    strip_prefix = "rules_proto-4.0.0-3.20.0",
+    sha256 = "dc3fb206a2cb3441b485eb1e423165b231235a1ea9b031b4433cf7bc1fa460dd",
+    strip_prefix = "rules_proto-5.3.0-21.7",
     urls = [
-        "https://github.com/bazelbuild/rules_proto/archive/refs/tags/4.0.0-3.20.0.tar.gz",
+        "https://github.com/bazelbuild/rules_proto/archive/refs/tags/5.3.0-21.7.tar.gz",
     ],
 )
 
@@ -163,9 +157,7 @@ rules_proto_toolchains()
 
 # FoundationDB files
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
-
-FDB_VERSION = "7.1.23"
+FDB_VERSION = "7.1.30"
 
 FDB_DOWNLOAD_URL = "https://github.com/apple/foundationdb/releases/download"
 

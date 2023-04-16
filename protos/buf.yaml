@@ -12,6 +12,7 @@ lint:
   except:
     # Conflicts with AIP-133
     - RPC_RESPONSE_STANDARD_NAME
+    - RPC_REQUEST_RESPONSE_UNIQUE
   ignore_only:
     PACKAGE_VERSION_SUFFIX:
       - pl/api

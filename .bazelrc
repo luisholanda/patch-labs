@@ -48,6 +48,7 @@ build --@rules_rust//rust/settings:pipelined_compilation=true
 
 # Use full target path to generate crate name.
 #build --@rules_rust//rust/settings:rename_first_party_crates=true
+#build --@rules_rust//rust/settings:third_party_dir=//third_party/crates
 #build --@rules_rust//rust/settings:use_real_import_macro=true
 
 # Prost require source info.

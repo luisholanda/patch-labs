@@ -27,9 +27,17 @@ crates_vendor(
             },
         )],
     },
-    cargo_lockfile = "//:Cargo.Bazel.lock",
+    cargo_lockfile = "//:Cargo.lock",
     manifests = ["//:Cargo.toml"],
     mode = "remote",
+    supported_platform_triples = [
+        "aarch64-unknown-linux-gnu",
+        "i686-unknown-linux-gnu",
+        "x86_64-unknown-linux-gnu",
+        "arm-unknown-linux-gnueabi",
+        "armv7-unknown-linux-gnueabi",
+        "powerpc-unknown-linux-gnu",
+    ],
     tags = ["manual"],
     vendor_path = "crates",
 )

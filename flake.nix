@@ -2,11 +2,14 @@
   description = "Patch Labs - A Patch-focused Code Review system";
 
   inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs";
+
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-    pre-commit-hooks.inputs.nixpkgs.follows = "tm-nixpkgs/nixpkgs";
+    pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
 
     tm-nixpkgs.url = "github:terramagna/nixpkgs";
     tm-nixpkgs.inputs.pre-commit-hooks.follows = "pre-commit-hooks";
+    tm-nixpkgs.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
@@ -29,13 +32,7 @@
         hooks = {
           alejandra.enable = true;
           statix.enable = true;
-          deadnix = {
-            enable = true;
-            name = "deadnix";
-            description = "A dead code analyzer for Nix expressions";
-            files = "\\.nix";
-            entry = "${pkgs.deadnix}/bin/deadnix -e -f";
-          };
+          deadnix.enable = true;
           build = {
             enable = true;
             name = "Build";
@@ -71,6 +68,7 @@
                     ${pkgs.bazel-buildtools}/bin/buildozer -f - <<< "add targets $missing|//protos:breaking_test"
                     exit 1
                 fi
+                git diff protos/BUILD.bazel
               '';
             in "${testScript}/bin/breaking-test-targets-check";
             pass_filenames = false;
@@ -139,7 +137,7 @@
           };
         };
 
-        packages = pkgs: with pkgs; [bazel_5 jdk11 zlib bazel-watcher libxcrypt git];
+        packages = pkgs: with pkgs; [bazel_6 zlib bazel-watcher libxcrypt git];
 
         startup.pre-commit = pre-commit-check.shellHook;
       };
