@@ -137,9 +137,15 @@
           };
         };
 
-        packages = pkgs: with pkgs; [bazel_6 zlib bazel-watcher libxcrypt git];
+        packages = pkgs: with pkgs; [bazel_6 zlib bazel-watcher libxcrypt git rustfmt];
 
         startup.pre-commit = pre-commit-check.shellHook;
+        startup.rustc-path = ''
+          out_path=$(bazel info output_base)
+          bazel build @rust_analyzer_1.69.0_tools//:rustc
+          export RUSTC="$out_path/external/rust_analyzer_1.69.0_tools/bin/rustc"
+          gen-rust-project
+        '';
       };
     in {
       checks = {inherit pre-commit-check;};

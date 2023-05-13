@@ -27,8 +27,8 @@ crates_vendor(
             },
         )],
     },
-    cargo_lockfile = "//:Cargo.lock",
-    manifests = ["//:Cargo.toml"],
+    cargo_lockfile = "//third-party:Cargo.lock",
+    manifests = ["//third-party:Cargo.toml"],
     mode = "remote",
     supported_platform_triples = [
         "aarch64-unknown-linux-gnu",

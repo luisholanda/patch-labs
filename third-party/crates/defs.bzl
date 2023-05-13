@@ -289,7 +289,7 @@ def aliases(
 ###############################################################################
 
 _NORMAL_DEPENDENCIES = {
-    "": {
+    "third-party": {
         _COMMON_CONDITION: {
             "argh": "@crates_vendor__argh-0.1.10//:argh",
             "bytes": "@crates_vendor__bytes-1.4.0//:bytes",
@@ -311,14 +311,14 @@ _NORMAL_DEPENDENCIES = {
 }
 
 _NORMAL_ALIASES = {
-    "": {
+    "third-party": {
         _COMMON_CONDITION: {
         },
     },
 }
 
 _NORMAL_DEV_DEPENDENCIES = {
-    "": {
+    "third-party": {
         _COMMON_CONDITION: {
             "mockall": "@crates_vendor__mockall-0.11.4//:mockall",
         },
@@ -326,14 +326,14 @@ _NORMAL_DEV_DEPENDENCIES = {
 }
 
 _NORMAL_DEV_ALIASES = {
-    "": {
+    "third-party": {
         _COMMON_CONDITION: {
         },
     },
 }
 
 _PROC_MACRO_DEPENDENCIES = {
-    "": {
+    "third-party": {
         _COMMON_CONDITION: {
             "async-trait": "@crates_vendor__async-trait-0.1.68//:async_trait",
         },
@@ -341,39 +341,39 @@ _PROC_MACRO_DEPENDENCIES = {
 }
 
 _PROC_MACRO_ALIASES = {
-    "": {
+    "third-party": {
     },
 }
 
 _PROC_MACRO_DEV_DEPENDENCIES = {
-    "": {
+    "third-party": {
     },
 }
 
 _PROC_MACRO_DEV_ALIASES = {
-    "": {
+    "third-party": {
         _COMMON_CONDITION: {
         },
     },
 }
 
 _BUILD_DEPENDENCIES = {
-    "": {
+    "third-party": {
     },
 }
 
 _BUILD_ALIASES = {
-    "": {
+    "third-party": {
     },
 }
 
 _BUILD_PROC_MACRO_DEPENDENCIES = {
-    "": {
+    "third-party": {
     },
 }
 
 _BUILD_PROC_MACRO_ALIASES = {
-    "": {
+    "third-party": {
     },
 }
 
