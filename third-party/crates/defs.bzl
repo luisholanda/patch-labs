@@ -305,6 +305,7 @@ _NORMAL_DEPENDENCIES = {
             "tokio": "@crates_vendor__tokio-1.28.1//:tokio",
             "tonic": "@crates_vendor__tonic-0.9.2//:tonic",
             "tonic-build": "@crates_vendor__tonic-build-0.9.2//:tonic_build",
+            "tonic-types": "@crates_vendor__tonic-types-0.9.2//:tonic_types",
             "uuid": "@crates_vendor__uuid-1.3.2//:uuid",
         },
     },
@@ -2316,6 +2317,16 @@ def crate_repositories():
         urls = ["https://crates.io/api/v1/crates/tonic-build/0.9.2/download"],
         strip_prefix = "tonic-build-0.9.2",
         build_file = Label("@patch-labs//third-party/crates:BUILD.tonic-build-0.9.2.bazel"),
+    )
+
+    maybe(
+        http_archive,
+        name = "crates_vendor__tonic-types-0.9.2",
+        sha256 = "54d564c75583dc072e6a7449f184e0bf1376b0f87b38080eff28c9ca589d4d4c",
+        type = "tar.gz",
+        urls = ["https://crates.io/api/v1/crates/tonic-types/0.9.2/download"],
+        strip_prefix = "tonic-types-0.9.2",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.tonic-types-0.9.2.bazel"),
     )
 
     maybe(

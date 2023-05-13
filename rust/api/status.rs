@@ -10,18 +10,9 @@
 //! and contextual information about a specific error.
 use std::error::Error;
 
-use prost::{bytes::BytesMut, Message};
-use prost_types::Any;
-use protos_google_rpc_rpc_rust::Status as RpcStatus;
+use prost::bytes::BytesMut;
 use tonic::Code;
-
-#[doc(inline)]
-pub use protos_google_rpc_rpc_rust::{
-    bad_request::FieldViolation, help::Link as HelpLink,
-    precondition_failure::Violation as PreconditionViolation,
-    quota_failure::Violation as QuotaViolation, BadRequest, DebugInfo, ErrorInfo, Help,
-    LocalizedMessage, PreconditionFailure, QuotaFailure, RequestInfo, ResourceInfo, RetryInfo,
-};
+use tonic_types::{ErrorDetails, StatusExt};
 
 /// A type that can be a `T` or [`Status`].
 pub type StatusOr<T> = Result<T, Status>;
@@ -39,7 +30,9 @@ pub struct Status(Box<Inner>);
 
 #[derive(Debug)]
 struct Inner {
-    status: RpcStatus,
+    details: ErrorDetails,
+    code: Code,
+    message: String,
     source: Option<Box<dyn Error + Send + Sync>>,
 }
 
@@ -68,107 +61,38 @@ impl From<Box<dyn Error + Send + Sync>> for Status {
 
 impl From<Status> for tonic::Status {
     fn from(s: Status) -> Self {
-        let mut details = BytesMut::with_capacity(s.0.status.encoded_len());
-
-        s.0.status
-            .encode(&mut details)
-            .expect("buffer did not had capacity to store status");
-
-        Self::with_details(s.code(), s.message().to_string(), details.freeze())
+        Self::with_error_details(s.code(), s.0.message, s.0.details)
     }
 }
 
 impl Status {
     fn new(code: Code, message: String) -> Self {
         Self(Box::new(Inner {
-            status: RpcStatus {
-                code: code as i32,
-                message,
-                details: vec![],
-            },
+            details: ErrorDetails::new(),
+            code,
+            message,
             source: None,
         }))
     }
 
     /// Get the code of this status.
     pub fn code(&self) -> Code {
-        Code::from_i32(self.0.status.code)
+        self.0.code
     }
 
     /// Get the message of this status.
     pub fn message(&self) -> &str {
-        &self.0.status.message
+        &self.0.message
     }
 
-    /// Get the payload of a specific url.
-    ///
-    /// Returns `None` if not present or if we can't decode via the given type.
-    pub fn payload<M: Message + Default>(&self, url: &str) -> Option<M> {
-        let payload = self.raw_payload(url)?;
-
-        M::decode(&payload.value[..]).ok()
+    /// Get the details of this status.
+    pub fn details(&self) -> &ErrorDetails {
+        &self.0.details
     }
 
-    #[inline(never)]
-    fn raw_payload(&self, url: &str) -> Option<&Any> {
-        let idx = self
-            .0
-            .status
-            .details
-            .binary_search_by_key(&url, |d| &d.type_url)
-            .ok()?;
-
-        Some(&self.0.status.details[idx])
-    }
-
-    /// Set the payload corresponding to the `type_url` key, overwriting
-    /// any existing payload for that `type_url`.
-    pub fn set_payload(&mut self, url: String, payload: &impl Message) {
-        #[inline(never)]
-        fn search_detail_by_url(
-            details: &mut Vec<Any>,
-            url: String,
-            required_len: usize,
-        ) -> &mut Any {
-            match details.binary_search_by_key(&&*url, |d| &d.type_url) {
-                Ok(idx) => {
-                    let detail = &mut details[idx];
-
-                    detail.value.clear();
-                    detail.value.reserve(required_len - detail.value.len());
-
-                    detail
-                }
-                Err(idx) => {
-                    details.insert(
-                        idx,
-                        Any {
-                            type_url: url,
-                            value: Vec::with_capacity(required_len),
-                        },
-                    );
-
-                    &mut details[idx]
-                }
-            }
-        }
-
-        let required_len = payload.encoded_len();
-
-        let detail = search_detail_by_url(&mut self.0.status.details, url, required_len);
-
-        payload
-            .encode(&mut detail.value)
-            .expect("buffer did not had capacity to store Status payload");
-    }
-
-    /// Remove the payload associated with the given url.
-    pub fn remove_payload(&mut self, url: &str) {
-        let Ok(idx) = self.0.status.details.binary_search_by_key(&url, |d| &d.type_url) else {
-            return;
-        };
-
-        self.0.status.details.remove(idx);
+    /// Get the details of this status.
+    pub fn details_mut(&mut self) -> &mut ErrorDetails {
+        &mut self.0.details
     }
 }
 
@@ -275,28 +199,4 @@ gen_constructors! {
 
     /// The request does not have valid authentication credentials for the operation.
     unauthenticated => Unauthenticated,
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_payload() {
-        let mut s = Status::internal("foo");
-
-        s.set_payload("bla".to_string(), &"bla".to_string());
-
-        let bla = s.payload::<String>("bla");
-        assert_eq!(
-            bla.as_deref(),
-            Some("bla"),
-            "Could not get correct payload, found: {bla:?}"
-        );
-
-        s.remove_payload("bla");
-
-        let bla = s.payload::<String>("bla");
-        assert_eq!(bla, None, "Payload not deleted");
-    }
 }
