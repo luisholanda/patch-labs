@@ -1,0 +1,45 @@
+load("//build/bazel/proto:library.bzl", "pl_proto_library")
+
+package(default_visibility = ["//protos:__subpackages__"])
+
+pl_proto_library(
+    name = "repository_service_proto",
+    srcs = ["repository_service.proto"],
+    deps = [
+        ":repository_proto",
+        "//protos/google/api:field_behavior_proto",
+        "//protos/google/api:resource_proto",
+        "//protos/google/longrunning:operations_proto",
+        "@com_google_protobuf//:field_mask_proto",
+    ],
+)
+
+pl_proto_library(
+    name = "repository_proto",
+    srcs = ["repository.proto"],
+    deps = [
+        ":reference_proto",
+        "//protos/google/api:field_behavior_proto",
+        "//protos/google/api:resource_proto",
+        "@com_google_protobuf//:timestamp_proto",
+    ],
+)
+
+pl_proto_library(
+    name = "reference_proto",
+    srcs = ["reference.proto"],
+    deps = [
+        ":object_proto",
+        "//protos/google/api:field_behavior_proto",
+        "//protos/google/api:resource_proto",
+        "@com_google_protobuf//:timestamp_proto",
+    ],
+)
+
+pl_proto_library(
+    name = "object_proto",
+    srcs = ["object.proto"],
+    deps = [
+        "//protos/google/api:field_behavior_proto",
+    ],
+)

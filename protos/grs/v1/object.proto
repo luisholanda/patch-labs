@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package grs.v1;
+
+import "google/api/field_behavior.proto";
+
+// A git object inside a repository.
+message Object {
+  // All possible kinds objects may have.
+  enum Type {
+    // Default value.
+    TYPE_UNSPECIFIED = 0;
+    // The object is a commit.
+    TYPE_COMMIT = 1;
+    // The object is Tree
+    TYPE_TREE = 2;
+    // The object is a blob.
+    TYPE_BLOB = 3;
+    // The object is a tag.
+    TYPE_TAG = 4;
+  }
+
+  // The OID of the object.
+  //
+  // Following the git standard UI, this should be encoded
+  // in hexadecimal when displaying to users.
+  bytes oid = 1 [
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+
+  // The type of this object.
+  Type kind = 2 [
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+
+  // Length of the object data in bytes.
+  int64 data_length_bytes = 3 [
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+}

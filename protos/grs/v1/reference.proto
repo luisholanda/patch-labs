@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package grs.v1;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/protobuf/timestamp.proto";
+import "grs/v1/object.proto";
+
+// A git reference inside a repository.
+//
+// References are names given to git objects, e.g. branches, tags,
+// notes, etc.
+message Reference {
+  // The name of the reference.
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // The repository the reference is part of.
+  string repository = 2 [(google.api.resource_reference) = {
+    type: "grs.patch.labs/Repository"
+  }];
+
+  // The object this refernce points to.
+  Object object = 3 [(google.api.field_behavior) = REQUIRED];
+
+  // When the reference was created.
+  google.protobuf.Timestamp create_time = 8 [
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+
+  // When the reference was last updated.
+  //
+  // If the reference is a branch, this will be changed upon pushes.
+  google.protobuf.Timestamp update_time = 9 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+// A reference that is guaranteed to be a branch.
+message Branch {
+  // The reference itself.
+  Reference reference = 1;
+}
+
+// A reference that is guaranteed to be a tag.
+message Tag {
+  // The reference itself.
+  Reference reference = 1;
+}

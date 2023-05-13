@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package grs.v1;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/protobuf/timestamp.proto";
+import "grs/v1/reference.proto";
+
+// A git repository.
+message Repository {
+  option (google.api.resource) = {
+    type: "grs.patch.labs/Repository"
+    pattern: "repositories/{repository}"
+  };
+
+  // Access levels for a repository.
+  enum AccessLevel {
+    // Default value.
+    ACCESS_LEVEL_UNSPECIFIED = 0;
+    // Clients can only read data from the repository.
+    ACCESS_LEVEL_READ_ONLY = 1;
+    // Clients can read and write data from/to the repository.
+    ACCESS_LEVEL_READ_WRITE = 2;
+  }
+
+  // The name of the repository.
+  //
+  // Format:
+  //   - repositories/{repository}
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // The HEAD branch of the repository.
+  //
+  // The field will only be absent if the repository is empty.
+  Branch default_branch = 2 [(google.api.field_behavior) = OPTIONAL];
+
+  // The current access level of the repository.
+  AccessLevel access_level = 3;
+
+  // IDs 4 to 7 reserved for future data.
+
+  // When the repository was created.
+  google.protobuf.Timestamp create_time = 8 [
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+
+  // When the repository informations was last updated.
+  //
+  // This DOES NOT include push times. This is present on `Reference.update_time`.
+  google.protobuf.Timestamp update_time = 9 [(google.api.field_behavior) = OUTPUT_ONLY];
+}

@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package grs.v1;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/longrunning/operations.proto";
+import "google/protobuf/field_mask.proto";
+import "grs/v1/repository.proto";
+
+// Service that handles control-plane operations in Git repositories.
+//
+// Data-plane operations are available in GitService.
+service RepositoryService {
+  // Get a repository in the service.
+  rpc GetRepository(GetRepositoryRequest) returns (Repository);
+
+  // List repositories in the service.
+  rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse);
+
+  // Create a repository in the service.
+  //
+  // After returning, the repository will be empty and will have
+  // read/write access.
+  rpc CreateRepository(CreateRepositoryRequest) returns (Repository);
+
+  // Update a repository in the service.
+  rpc UpdateRepository(UpdateRepositoryRequest) returns (Repository);
+
+  // Delete a repository in the service.
+  //
+  // After this call, the repository is no more accessible via other
+  // RPC methods.
+  //
+  // Note that this operation is IRREVERSIBLE and WILL destroy data.
+  //
+  // Information about the repository may be found via the operation metadata.
+  rpc DeleteRepository(DeleteRepositoryRequest) returns (google.longrunning.Operation) {
+    option (google.longrunning.operation_info) = {
+      response_type: "google.protobuf.Empty"
+      metadata_type: "Repository"
+    };
+  }
+}
+
+// Request message for retrieving a Repository.
+message GetRepositoryRequest {
+  // The name of the repository to retrieve.
+  //
+  // Format: repositories/{repository}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "grs.patch.labs/Repository"
+    }
+  ];
+}
+
+// Request message for listing repositories.
+message ListRepositoriesRequest {
+  // 1 is reserved for when we add folders.
+
+  // The maximum number of books to return. The service may return
+  // fewer values than specified.
+  int32 page_size = 2;
+
+  // A page token, received from a previous `ListRepositories` call.
+  // Provide this to retrieve the subsequent page.
+  //
+  // When paginating, all other parameters must remain constant between calls.
+  string page_token = 3;
+}
+
+// Response message for listing repositories.
+message ListRepositoriesResponse {
+  // The repositories listed.
+  repeated Repository repositories = 1;
+
+  // A token, which can be sent as `page_token` to retrieve the next page.
+  // If this field is omitted, there are no subsequent pages.
+  string next_page_token = 2;
+}
+
+// Request message for creating a Repository.
+message CreateRepositoryRequest {
+  // Name of the repository to create.
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+// Request message for updating a Repository.
+message UpdateRepositoryRequest {
+  // The repository to update.
+  //
+  // The repository's name field is used to identify the repository to update.
+  Repository repository = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // The list of fields to update.
+  //
+  // If omitted, the entire resource will be updated.
+  optional google.protobuf.FieldMask update_mask = 2;
+}
+
+// Request message for deleting a Repository.
+message DeleteRepositoryRequest {
+  // The name of the repository to delete.
+  //
+  // Format: repositories/{repository}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "grs.patch.labs/Repository"
+    }
+  ];
+}
