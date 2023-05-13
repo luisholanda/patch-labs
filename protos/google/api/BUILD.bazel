@@ -1,0 +1,21 @@
+load("//build/bazel/proto:library.bzl", "pl_proto_library")
+
+pl_proto_library(
+    name = "resource_proto",
+    srcs = ["resource.proto"],
+    disable_lint = True,
+    visibility = ["//protos:__subpackages__"],
+    deps = [
+        "@com_google_protobuf//:descriptor_proto",
+    ],
+)
+
+pl_proto_library(
+    name = "field_behavior_proto",
+    srcs = ["field_behavior.proto"],
+    disable_lint = True,
+    visibility = ["//protos:__subpackages__"],
+    deps = [
+        "@com_google_protobuf//:descriptor_proto",
+    ],
+)

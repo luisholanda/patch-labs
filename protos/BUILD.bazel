@@ -7,6 +7,9 @@ buf_breaking_test(
     against = "testdata/image.bin",
     config = "buf.yaml",
     targets = [
+        "//protos/google/api:field_behavior_proto",
+        "//protos/google/api:resource_proto",
+        "//protos/google/longrunning:operations_proto",
         "//protos/google/rpc:error_details_proto",
         "//protos/google/rpc:status_proto",
         "//protos/pl/api:resource_name",

@@ -16,3 +16,5 @@ lint:
   ignore_only:
     PACKAGE_VERSION_SUFFIX:
       - pl/api
+      - google/api
+      - google/rpc
