@@ -11,11 +11,11 @@ load("@rules_rust//rust:defs.bzl", "rust_library")
 package(default_visibility = ["//visibility:public"])
 
 # licenses([
-#     "TODO",  # Apache-2.0 OR ISC OR MIT
+#     "TODO",  # MIT
 # ])
 
 rust_library(
-    name = "rustls_pemfile",
+    name = "xml",
     srcs = glob(["**/*.rs"]),
     compile_data = glob(
         include = ["**"],
@@ -28,17 +28,14 @@ rust_library(
         ],
     ),
     crate_root = "src/lib.rs",
-    edition = "2018",
+    edition = "2021",
     rustc_flags = ["--cap-lints=allow"],
     tags = [
         "cargo-bazel",
-        "crate-name=rustls-pemfile",
+        "crate-name=xml-rs",
         "manual",
         "noclippy",
         "norustfmt",
     ],
-    version = "1.0.2",
-    deps = [
-        "@crates_vendor__base64-0.21.0//:base64",
-    ],
+    version = "0.8.13",
 )

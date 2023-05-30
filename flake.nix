@@ -110,7 +110,7 @@
           repin-crates = {
             help = "Repin Rust crates";
             command = ''
-              bazel run //third-party:crates_vendor -- --repin
+              bazel run //third-party:crates_vendor -- --repin=$${1:-1}
               bazel run //third-party:crates_vendor
             '';
             category = "dependencies";

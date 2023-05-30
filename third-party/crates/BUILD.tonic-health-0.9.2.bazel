@@ -6,7 +6,7 @@
 #     bazel run @//third-party:crates_vendor
 ###############################################################################
 
-load("@rules_rust//rust:defs.bzl", "rust_proc_macro")
+load("@rules_rust//rust:defs.bzl", "rust_library")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -14,8 +14,8 @@ package(default_visibility = ["//visibility:public"])
 #     "TODO",  # MIT
 # ])
 
-rust_proc_macro(
-    name = "tokio_macros",
+rust_library(
+    name = "tonic_health",
     srcs = glob(["**/*.rs"]),
     compile_data = glob(
         include = ["**"],
@@ -27,20 +27,26 @@ rust_proc_macro(
             "WORKSPACE.bazel",
         ],
     ),
+    crate_features = [
+        "default",
+        "transport",
+    ],
     crate_root = "src/lib.rs",
-    edition = "2018",
+    edition = "2021",
     rustc_flags = ["--cap-lints=allow"],
     tags = [
         "cargo-bazel",
-        "crate-name=tokio-macros",
+        "crate-name=tonic-health",
         "manual",
         "noclippy",
         "norustfmt",
     ],
-    version = "2.1.0",
+    version = "0.9.2",
     deps = [
-        "@crates_vendor__proc-macro2-1.0.56//:proc_macro2",
-        "@crates_vendor__quote-1.0.27//:quote",
-        "@crates_vendor__syn-2.0.15//:syn",
+        "@crates_vendor__async-stream-0.3.5//:async_stream",
+        "@crates_vendor__prost-0.11.9//:prost",
+        "@crates_vendor__tokio-1.28.2//:tokio",
+        "@crates_vendor__tokio-stream-0.1.14//:tokio_stream",
+        "@crates_vendor__tonic-0.9.2//:tonic",
     ],
 )

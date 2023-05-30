@@ -41,7 +41,7 @@ rust_library(
     version = "0.1.25",
     deps = [
         "@crates_vendor__prettyplease-0.1.25//:build_script_build",
-        "@crates_vendor__proc-macro2-1.0.56//:proc_macro2",
+        "@crates_vendor__proc-macro2-1.0.59//:proc_macro2",
         "@crates_vendor__syn-1.0.109//:syn",
     ],
 )

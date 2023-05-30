@@ -10,8 +10,12 @@ load("@rules_rust//rust:defs.bzl", "rust_library")
 
 package(default_visibility = ["//visibility:public"])
 
+# licenses([
+#     "TODO",  # Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT
+# ])
+
 rust_library(
-    name = "webpki",
+    name = "linux_raw_sys",
     srcs = glob(["**/*.rs"]),
     compile_data = glob(
         include = ["**"],
@@ -24,23 +28,20 @@ rust_library(
         ],
     ),
     crate_features = [
-        "alloc",
-        "default",
-        "std",
+        "errno",
+        "general",
+        "ioctl",
+        "no_std",
     ],
     crate_root = "src/lib.rs",
     edition = "2018",
     rustc_flags = ["--cap-lints=allow"],
     tags = [
         "cargo-bazel",
-        "crate-name=rustls-webpki",
+        "crate-name=linux-raw-sys",
         "manual",
         "noclippy",
         "norustfmt",
     ],
-    version = "0.100.1",
-    deps = [
-        "@crates_vendor__ring-0.16.20//:ring",
-        "@crates_vendor__untrusted-0.7.1//:untrusted",
-    ],
+    version = "0.3.8",
 )

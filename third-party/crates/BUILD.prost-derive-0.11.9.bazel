@@ -41,8 +41,8 @@ rust_proc_macro(
     deps = [
         "@crates_vendor__anyhow-1.0.71//:anyhow",
         "@crates_vendor__itertools-0.10.5//:itertools",
-        "@crates_vendor__proc-macro2-1.0.56//:proc_macro2",
-        "@crates_vendor__quote-1.0.27//:quote",
+        "@crates_vendor__proc-macro2-1.0.59//:proc_macro2",
+        "@crates_vendor__quote-1.0.28//:quote",
         "@crates_vendor__syn-1.0.109//:syn",
     ],
 )

@@ -7,16 +7,16 @@
 ###############################################################################
 
 load("@rules_rust//cargo:defs.bzl", "cargo_build_script")
-load("@rules_rust//rust:defs.bzl", "rust_proc_macro")
+load("@rules_rust//rust:defs.bzl", "rust_library")
 
 package(default_visibility = ["//visibility:public"])
 
 # licenses([
-#     "TODO",  # MIT OR Apache-2.0
+#     "TODO",  # MIT/Apache-2.0
 # ])
 
-rust_proc_macro(
-    name = "rustversion",
+rust_library(
+    name = "wasm_bindgen_shared",
     srcs = glob(["**/*.rs"]),
     compile_data = glob(
         include = ["**"],
@@ -33,22 +33,22 @@ rust_proc_macro(
     rustc_flags = ["--cap-lints=allow"],
     tags = [
         "cargo-bazel",
-        "crate-name=rustversion",
+        "crate-name=wasm-bindgen-shared",
         "manual",
         "noclippy",
         "norustfmt",
     ],
-    version = "1.0.12",
+    version = "0.2.86",
     deps = [
-        "@crates_vendor__rustversion-1.0.12//:build_script_build",
+        "@crates_vendor__wasm-bindgen-shared-0.2.86//:build_script_build",
     ],
 )
 
 cargo_build_script(
-    name = "rustversion_build_script",
+    name = "wasm-bindgen-shared_build_script",
     srcs = glob(["**/*.rs"]),
     crate_name = "build_script_build",
-    crate_root = "build/build.rs",
+    crate_root = "build.rs",
     data = glob(
         include = ["**"],
         exclude = [
@@ -60,22 +60,23 @@ cargo_build_script(
         ],
     ),
     edition = "2018",
+    links = "wasm_bindgen",
     rustc_flags = [
         "--cap-lints=allow",
     ],
     tags = [
         "cargo-bazel",
-        "crate-name=rustversion",
+        "crate-name=wasm-bindgen-shared",
         "manual",
         "noclippy",
         "norustfmt",
     ],
-    version = "1.0.12",
+    version = "0.2.86",
     visibility = ["//visibility:private"],
 )
 
 alias(
     name = "build_script_build",
-    actual = "rustversion_build_script",
+    actual = "wasm-bindgen-shared_build_script",
     tags = ["manual"],
 )

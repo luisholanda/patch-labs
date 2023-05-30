@@ -48,7 +48,7 @@ rust_library(
         "@crates_vendor__crossbeam-utils-0.8.15//:crossbeam_utils",
         "@crates_vendor__fxhash-0.2.1//:fxhash",
         "@crates_vendor__libc-0.2.144//:libc",
-        "@crates_vendor__log-0.4.17//:log",
+        "@crates_vendor__log-0.4.18//:log",
         "@crates_vendor__parking_lot-0.11.2//:parking_lot",
     ] + select({
         "@rules_rust//rust/platform:aarch64-unknown-linux-gnu": [

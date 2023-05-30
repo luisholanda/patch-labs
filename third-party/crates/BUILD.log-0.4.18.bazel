@@ -16,7 +16,7 @@ package(default_visibility = ["//visibility:public"])
 # ])
 
 rust_library(
-    name = "serde",
+    name = "log",
     srcs = glob(["**/*.rs"]),
     compile_data = glob(
         include = ["**"],
@@ -29,7 +29,6 @@ rust_library(
         ],
     ),
     crate_features = [
-        "default",
         "std",
     ],
     crate_root = "src/lib.rs",
@@ -37,22 +36,21 @@ rust_library(
     rustc_flags = ["--cap-lints=allow"],
     tags = [
         "cargo-bazel",
-        "crate-name=serde",
+        "crate-name=log",
         "manual",
         "noclippy",
         "norustfmt",
     ],
-    version = "1.0.163",
+    version = "0.4.18",
     deps = [
-        "@crates_vendor__serde-1.0.163//:build_script_build",
+        "@crates_vendor__log-0.4.18//:build_script_build",
     ],
 )
 
 cargo_build_script(
-    name = "serde_build_script",
+    name = "log_build_script",
     srcs = glob(["**/*.rs"]),
     crate_features = [
-        "default",
         "std",
     ],
     crate_name = "build_script_build",
@@ -73,17 +71,17 @@ cargo_build_script(
     ],
     tags = [
         "cargo-bazel",
-        "crate-name=serde",
+        "crate-name=log",
         "manual",
         "noclippy",
         "norustfmt",
     ],
-    version = "1.0.163",
+    version = "0.4.18",
     visibility = ["//visibility:private"],
 )
 
 alias(
     name = "build_script_build",
-    actual = "serde_build_script",
+    actual = "log_build_script",
     tags = ["manual"],
 )
