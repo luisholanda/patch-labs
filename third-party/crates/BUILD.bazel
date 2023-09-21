@@ -27,19 +27,19 @@ filegroup(
 # Workspace Member Dependencies
 alias(
     name = "argh",
-    actual = "@crates_vendor__argh-0.1.10//:argh",
+    actual = "@crates_vendor__argh-0.1.12//:argh",
     tags = ["manual"],
 )
 
 alias(
     name = "async-trait",
-    actual = "@crates_vendor__async-trait-0.1.68//:async_trait",
+    actual = "@crates_vendor__async-trait-0.1.73//:async_trait",
     tags = ["manual"],
 )
 
 alias(
     name = "bytes",
-    actual = "@crates_vendor__bytes-1.4.0//:bytes",
+    actual = "@crates_vendor__bytes-1.5.0//:bytes",
     tags = ["manual"],
 )
 
@@ -81,7 +81,7 @@ alias(
 
 alias(
     name = "hyper",
-    actual = "@crates_vendor__hyper-0.14.26//:hyper",
+    actual = "@crates_vendor__hyper-0.14.27//:hyper",
     tags = ["manual"],
 )
 
@@ -117,13 +117,13 @@ alias(
 
 alias(
     name = "smallvec",
-    actual = "@crates_vendor__smallvec-1.10.0//:smallvec",
+    actual = "@crates_vendor__smallvec-1.11.1//:smallvec",
     tags = ["manual"],
 )
 
 alias(
     name = "tokio",
-    actual = "@crates_vendor__tokio-1.28.2//:tokio",
+    actual = "@crates_vendor__tokio-1.32.0//:tokio",
     tags = ["manual"],
 )
 
@@ -159,6 +159,6 @@ alias(
 
 alias(
     name = "uuid",
-    actual = "@crates_vendor__uuid-1.3.3//:uuid",
+    actual = "@crates_vendor__uuid-1.4.1//:uuid",
     tags = ["manual"],
 )

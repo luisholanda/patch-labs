@@ -43,7 +43,8 @@ version = "1.10.0"
 default-features = false
 features = [
   "prost",
-  "codegen"
+  "codegen",
+  "transport",
 ]
 version = "0.9.2"
 

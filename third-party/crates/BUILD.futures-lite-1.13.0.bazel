@@ -21,6 +21,7 @@ rust_library(
         include = ["**"],
         exclude = [
             "**/* *",
+            ".tmp_git_root/**/*",
             "BUILD",
             "BUILD.bazel",
             "WORKSPACE",
@@ -47,14 +48,23 @@ rust_library(
         "noclippy",
         "norustfmt",
     ],
+    target_compatible_with = select({
+        "@rules_rust//rust/platform:aarch64-unknown-linux-gnu": [],
+        "@rules_rust//rust/platform:arm-unknown-linux-gnueabi": [],
+        "@rules_rust//rust/platform:armv7-unknown-linux-gnueabi": [],
+        "@rules_rust//rust/platform:i686-unknown-linux-gnu": [],
+        "@rules_rust//rust/platform:powerpc-unknown-linux-gnu": [],
+        "@rules_rust//rust/platform:x86_64-unknown-linux-gnu": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
     version = "1.13.0",
     deps = [
         "@crates_vendor__fastrand-1.9.0//:fastrand",
         "@crates_vendor__futures-core-0.3.28//:futures_core",
         "@crates_vendor__futures-io-0.3.28//:futures_io",
-        "@crates_vendor__memchr-2.5.0//:memchr",
+        "@crates_vendor__memchr-2.6.3//:memchr",
         "@crates_vendor__parking-2.1.0//:parking",
-        "@crates_vendor__pin-project-lite-0.2.9//:pin_project_lite",
+        "@crates_vendor__pin-project-lite-0.2.13//:pin_project_lite",
         "@crates_vendor__waker-fn-1.1.0//:waker_fn",
     ],
 )

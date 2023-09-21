@@ -7,9 +7,11 @@
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
 
-    tm-nixpkgs.url = "github:terramagna/nixpkgs";
-    tm-nixpkgs.inputs.pre-commit-hooks.follows = "pre-commit-hooks";
-    tm-nixpkgs.inputs.nixpkgs.follows = "nixpkgs";
+    tm-nixpkgs = {
+      url = "github:terramagna/nixpkgs";
+      inputs.pre-commit-hooks.follows = "pre-commit-hooks";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -110,7 +112,7 @@
           repin-crates = {
             help = "Repin Rust crates";
             command = ''
-              bazel run //third-party:crates_vendor -- --repin=$${1:-1}
+              bazel run //third-party:crates_vendor -- --repin=all
               bazel run //third-party:crates_vendor
             '';
             category = "dependencies";

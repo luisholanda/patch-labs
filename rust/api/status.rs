@@ -10,7 +10,6 @@
 //! and contextual information about a specific error.
 use std::error::Error;
 
-use prost::bytes::BytesMut;
 use tonic::Code;
 use tonic_types::{ErrorDetails, StatusExt};
 

@@ -6,11 +6,13 @@ pl_rust_library(
         "lib.rs",
         "transaction.rs",
     ],
+    test_deps = [
+        "//third-party/crates:tokio",
+    ],
     visibility = ["//rust/database:__pkg__"],
     deps = [
         "//rust/database:error",
         "//third-party/crates:foundationdb",
         "//third-party/crates:sled",
-        "//third-party/crates:tokio",
     ],
 )

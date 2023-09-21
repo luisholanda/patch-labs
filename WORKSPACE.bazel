@@ -6,8 +6,8 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 # Configure Rust support
 http_archive(
     name = "rules_rust",
-    sha256 = "950a3ad4166ae60c8ccd628d1a8e64396106e7f98361ebe91b0bcfe60d8e4b60",
-    urls = ["https://github.com/bazelbuild/rules_rust/releases/download/0.20.0/rules_rust-v0.20.0.tar.gz"],
+    sha256 = "db89135f4d1eaa047b9f5518ba4037284b43fc87386d08c1d1fe91708e3730ae",
+    urls = ["https://github.com/bazelbuild/rules_rust/releases/download/0.27.0/rules_rust-v0.27.0.tar.gz"],
 )
 
 load("@rules_rust//rust:repositories.bzl", "rules_rust_dependencies", "rust_register_toolchains")
@@ -16,7 +16,7 @@ rules_rust_dependencies()
 
 rust_register_toolchains(
     edition = "2021",
-    versions = ["1.69.0"],
+    versions = ["1.72.1"],
 )
 
 load("@rules_rust//tools/rust_analyzer:deps.bzl", "rust_analyzer_dependencies")
@@ -37,7 +37,7 @@ crate_repositories()
 
 git_repository(
     name = "rules_nixpkgs",
-    commit = "f80a3b5bd19efa353638cdb0236f6a951cac02b7",
+    commit = "7e627d76ba65d6c42586fc265e46bd370672b4eb",
     remote = "https://github.com/tweag/rules_nixpkgs.git",
     shallow_since = "1663761031 +0000",
 )
@@ -87,8 +87,6 @@ nixpkgs_package(
     name = "glibc",
     attribute_path = "glibc.dev",
     build_file_content = """
-load("@rules_cc//cc:defs.bzl", "cc_library")
-
 filegroup(
     name = "headers",
     srcs = glob(["include/**/*"]),
@@ -115,6 +113,46 @@ alias(
 cc_import(
     name = "libclang",
     shared_library = "lib/libclang.so",
+)
+    """,
+    nix_file_content = "import <nixpkgs> {}",
+    repository = "@nixpkgs",
+)
+
+nixpkgs_package(
+    name = "liburing",
+    attribute_path = "liburing.out",
+    build_file_content = """
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "liburing",
+    srcs = ["lib/liburing.a"],
+    hdrs = ["@liburing_hdrs//:headers"],
+    strip_include_prefix = "include/",
+)
+    """,
+    nix_file_content = "import <nixpkgs> {}",
+    repository = "@nixpkgs",
+)
+
+nixpkgs_package(
+    name = "liburing_hdrs",
+    attribute_path = "liburing.dev",
+    build_file_content = """
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "headers",
+    srcs = [
+      "include/liburing.h",
+      "include/liburing/barrier.h",
+      "include/liburing/compat.h",
+      "include/liburing/io_uring.h",
+      "include/liburing/io_uring_version.h",
+    ],
 )
     """,
     nix_file_content = "import <nixpkgs> {}",

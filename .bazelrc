@@ -5,6 +5,7 @@ build --incompatible_enable_cc_toolchain_resolution
 build \
   --@rules_rust//:extra_rustc_flag='-Dfuture-incompatible' \
   --@rules_rust//:extra_rustc_flag='-Dnonstandard-style' \
+  --@rules_rust//:extra_rustc_flag='-Dlet_underscore_drop' \
   --@rules_rust//:extra_rustc_flag='-Wunused' \
   --@rules_rust//:extra_rustc_flag='-Dclippy::complexity' \
   --@rules_rust//:extra_rustc_flag='-Dclippy::suspicious' \
@@ -23,7 +24,6 @@ build \
   --@rules_rust//:extra_rustc_flag='-Dclippy::implicit_saturating_sub' \
   --@rules_rust//:extra_rustc_flag='-Dclippy::items_after_statements' \
   --@rules_rust//:extra_rustc_flag='-Dclippy::large_types_passed_by_value' \
-  --@rules_rust//:extra_rustc_flag='-Dclippy::let_underscore_drop' \
   --@rules_rust//:extra_rustc_flag='-Dclippy::manual_assert' \
   --@rules_rust//:extra_rustc_flag='-Dclippy::map_unwrap_or' \
   --@rules_rust//:extra_rustc_flag='-Dclippy::match_wildcard_for_single_variants' \
@@ -34,8 +34,8 @@ build \
   --@rules_rust//:extra_rustc_flag='-Wclippy::too_many_lines' \
 
 build:ra --@rules_rust//:error_format=json
-#build:ra --aspects=@rules_rust//rust:defs.bzl%rust_clippy_aspect
-#build:ra --output_groups=+clippy_checks
+build:ra --aspects=@rules_rust//rust:defs.bzl%rust_clippy_aspect
+build:ra --output_groups=+clippy_checks
 build:ra --noshow_progress
 build:ra --ui_event_filters=-INFO
 

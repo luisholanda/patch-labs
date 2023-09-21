@@ -21,6 +21,7 @@ rust_library(
         include = ["**"],
         exclude = [
             "**/* *",
+            ".tmp_git_root/**/*",
             "BUILD",
             "BUILD.bazel",
             "WORKSPACE",
@@ -46,6 +47,15 @@ rust_library(
         "noclippy",
         "norustfmt",
     ],
+    target_compatible_with = select({
+        "@rules_rust//rust/platform:aarch64-unknown-linux-gnu": [],
+        "@rules_rust//rust/platform:arm-unknown-linux-gnueabi": [],
+        "@rules_rust//rust/platform:armv7-unknown-linux-gnueabi": [],
+        "@rules_rust//rust/platform:i686-unknown-linux-gnu": [],
+        "@rules_rust//rust/platform:powerpc-unknown-linux-gnu": [],
+        "@rules_rust//rust/platform:x86_64-unknown-linux-gnu": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
     version = "3.2.25",
     deps = [
         "@crates_vendor__atty-0.2.14//:atty",
@@ -53,7 +63,7 @@ rust_library(
         "@crates_vendor__clap_lex-0.2.4//:clap_lex",
         "@crates_vendor__indexmap-1.9.3//:indexmap",
         "@crates_vendor__strsim-0.10.0//:strsim",
-        "@crates_vendor__termcolor-1.2.0//:termcolor",
+        "@crates_vendor__termcolor-1.3.0//:termcolor",
         "@crates_vendor__textwrap-0.16.0//:textwrap",
     ],
 )

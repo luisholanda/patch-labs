@@ -26,6 +26,19 @@ crates_vendor(
                 "BINDGEN_EXTRA_CLANG_ARGS": "-I$${pwd}/external/glibc/include",
             },
         )],
+        "glommio": [crate.annotation(
+            additive_build_file_content = """
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "rusturing",
+    srcs = ["rusturing.c"],
+    deps = ["@liburing//:liburing"],
+)
+            """,
+            gen_build_script = False,
+            deps = [":rusturing"],
+        )],
     },
     cargo_lockfile = "//third-party:Cargo.lock",
     manifests = ["//third-party:Cargo.toml"],
