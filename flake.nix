@@ -133,7 +133,7 @@
           rust-analyzer-check = {
             help = "Command to pass to rust-analyzer as a replacement to cargo check";
             command = ''
-              bazel build --config=ra //rust/... 2>&1
+              bazel build --config=ra //rust/... //build/bazel/... 2>&1
             '';
             category = "helpers";
           };
@@ -144,8 +144,10 @@
         startup.pre-commit = pre-commit-check.shellHook;
         startup.rustc-path = ''
           out_path=$(bazel info output_base)
-          bazel build @rust_analyzer_1.69.0_tools//:rustc
-          export RUSTC="$out_path/external/rust_analyzer_1.69.0_tools/bin/rustc"
+          # TODO: make this platform independent
+          ra_tools_repo="rust_linux_x86_64__x86_64-unknown-linux-gnu__stable_tools"
+          bazel build "@$ra_tools_repo//:rustc"
+          export RUSTC="$out_path/external/$ra_tools_repo/bin/rustc"
           gen-rust-project
         '';
       };

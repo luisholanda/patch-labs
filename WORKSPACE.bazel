@@ -163,13 +163,18 @@ filegroup(
 #  Protobuf support  #
 ######################
 
-http_archive(
+git_repository(
     name = "rules_proto",
-    sha256 = "dc3fb206a2cb3441b485eb1e423165b231235a1ea9b031b4433cf7bc1fa460dd",
-    strip_prefix = "rules_proto-5.3.0-21.7",
-    urls = [
-        "https://github.com/bazelbuild/rules_proto/archive/refs/tags/5.3.0-21.7.tar.gz",
-    ],
+    commit = "673e59ea247296c95c51ac01de67f4de8f7a846a",
+    remote = "https://github.com/bazelbuild/rules_proto.git",
+    shallow_since = "1695224410 +0000",
+)
+
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = "d6aac727167e7a91e407d482ab541c124cc7e101914ae37754b15b0e6d8d8546",
+    strip_prefix = "protobuf-24.3",
+    urls = ["https://github.com/protocolbuffers/protobuf/releases/download/v24.3/protobuf-24.3.zip"],
 )
 
 http_archive(
@@ -180,6 +185,10 @@ http_archive(
         "https://github.com/bufbuild/rules_buf/archive/refs/tags/v0.1.1.zip",
     ],
 )
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+
+protobuf_deps()
 
 load("@rules_buf//buf:repositories.bzl", "rules_buf_dependencies", "rules_buf_toolchains")
 

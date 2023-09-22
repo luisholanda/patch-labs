@@ -389,4 +389,21 @@ mod tests {
             resource_name!("users").type_();
         }
     }
+
+    mod protobuf {
+        use prost::Message;
+
+        use crate::ResourceName;
+
+        #[test]
+        fn test_string_transparent() {
+            let message = "users/john/repos".to_string().encode_to_vec();
+
+            let name = ResourceName::decode(&message[..]).unwrap();
+
+            let str = String::decode(&name.encode_to_vec()[..]).unwrap();
+
+            assert_eq!(str, "users/john/repos");
+        }
+    }
 }

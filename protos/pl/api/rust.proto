@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package pl.api;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+  pl.api.RustFieldOptions rust_field_options = 5000;
+}
+
+extend google.protobuf.MessageOptions {
+  pl.api.RustMsgOptions rust_message_options = 5000;
+}
+
+// Options used by our custom Rust generator for messages.
+message RustMsgOptions {
+  // Rust type to use for this message.
+  //
+  // Used by types that have a custom implementation.
+  string extern_type = 1;
+  // Attribute to add to the message type.
+  //
+  // Useful for derives.
+  repeated string attribute = 2;
+}
+
+// Options used by our custom Rust generator for fields.
+message RustFieldOptions {
+  reserved 1; // for extern_type.
+
+  // Attribute to add to the field.
+  //
+  // Useful for derives.
+  repeated string attribute = 2;
+  // If the field should be boxed.
+  bool boxed = 3;
+}

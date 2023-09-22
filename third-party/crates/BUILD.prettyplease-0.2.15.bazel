@@ -6,16 +6,17 @@
 #     bazel run @//third-party:crates_vendor
 ###############################################################################
 
+load("@rules_rust//cargo:defs.bzl", "cargo_build_script")
 load("@rules_rust//rust:defs.bzl", "rust_library")
 
 package(default_visibility = ["//visibility:public"])
 
 # licenses([
-#     "TODO",  # Apache-2.0
+#     "TODO",  # MIT OR Apache-2.0
 # ])
 
 rust_library(
-    name = "prost_types",
+    name = "prettyplease",
     srcs = glob(["**/*.rs"]),
     compile_data = glob(
         include = ["**"],
@@ -28,16 +29,12 @@ rust_library(
             "WORKSPACE.bazel",
         ],
     ),
-    crate_features = [
-        "default",
-        "std",
-    ],
     crate_root = "src/lib.rs",
     edition = "2021",
     rustc_flags = ["--cap-lints=allow"],
     tags = [
         "cargo-bazel",
-        "crate-name=prost-types",
+        "crate-name=prettyplease",
         "manual",
         "noclippy",
         "norustfmt",
@@ -51,8 +48,48 @@ rust_library(
         "@rules_rust//rust/platform:x86_64-unknown-linux-gnu": [],
         "//conditions:default": ["@platforms//:incompatible"],
     }),
-    version = "0.11.9",
+    version = "0.2.15",
     deps = [
-        "@crates_vendor__prost-0.11.9//:prost",
+        "@crates_vendor__prettyplease-0.2.15//:build_script_build",
+        "@crates_vendor__proc-macro2-1.0.67//:proc_macro2",
+        "@crates_vendor__syn-2.0.37//:syn",
     ],
+)
+
+cargo_build_script(
+    name = "prettyplease_build_script",
+    srcs = glob(["**/*.rs"]),
+    crate_name = "build_script_build",
+    crate_root = "build.rs",
+    data = glob(
+        include = ["**"],
+        exclude = [
+            "**/* *",
+            ".tmp_git_root/**/*",
+            "BUILD",
+            "BUILD.bazel",
+            "WORKSPACE",
+            "WORKSPACE.bazel",
+        ],
+    ),
+    edition = "2021",
+    links = "prettyplease02",
+    rustc_flags = [
+        "--cap-lints=allow",
+    ],
+    tags = [
+        "cargo-bazel",
+        "crate-name=prettyplease",
+        "manual",
+        "noclippy",
+        "norustfmt",
+    ],
+    version = "0.2.15",
+    visibility = ["//visibility:private"],
+)
+
+alias(
+    name = "build_script_build",
+    actual = "prettyplease_build_script",
+    tags = ["manual"],
 )

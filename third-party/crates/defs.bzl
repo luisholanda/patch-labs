@@ -304,16 +304,17 @@ _NORMAL_DEPENDENCIES = {
             "http": "@crates_vendor__http-0.2.9//:http",
             "http-body": "@crates_vendor__http-body-0.4.5//:http_body",
             "hyper": "@crates_vendor__hyper-0.14.27//:hyper",
-            "prost": "@crates_vendor__prost-0.11.9//:prost",
-            "prost-build": "@crates_vendor__prost-build-0.11.9//:prost_build",
-            "prost-types": "@crates_vendor__prost-types-0.11.9//:prost_types",
+            "prost": "@crates_vendor__prost-0.12.1//:prost",
+            "prost-build": "@crates_vendor__prost-build-0.12.1//:prost_build",
+            "prost-reflect": "@crates_vendor__prost-reflect-0.12.0//:prost_reflect",
+            "prost-types": "@crates_vendor__prost-types-0.12.1//:prost_types",
             "sled": "@crates_vendor__sled-0.34.7//:sled",
             "smallvec": "@crates_vendor__smallvec-1.11.1//:smallvec",
             "tokio": "@crates_vendor__tokio-1.32.0//:tokio",
-            "tonic": "@crates_vendor__tonic-0.9.2//:tonic",
-            "tonic-build": "@crates_vendor__tonic-build-0.9.2//:tonic_build",
-            "tonic-health": "@crates_vendor__tonic-health-0.9.2//:tonic_health",
-            "tonic-types": "@crates_vendor__tonic-types-0.9.2//:tonic_types",
+            "tonic": "@crates_vendor__tonic-0.10.1//:tonic",
+            "tonic-build": "@crates_vendor__tonic-build-0.10.1//:tonic_build",
+            "tonic-health": "@crates_vendor__tonic-health-0.10.1//:tonic_health",
+            "tonic-types": "@crates_vendor__tonic-types-0.10.1//:tonic_types",
             "tower": "@crates_vendor__tower-0.4.13//:tower",
             "uuid": "@crates_vendor__uuid-1.4.1//:uuid",
         },
@@ -617,6 +618,16 @@ def crate_repositories():
         urls = ["https://crates.io/api/v1/crates/base64/0.21.4/download"],
         strip_prefix = "base64-0.21.4",
         build_file = Label("@patch-labs//third-party/crates:BUILD.base64-0.21.4.bazel"),
+    )
+
+    maybe(
+        http_archive,
+        name = "crates_vendor__beef-0.5.2",
+        sha256 = "3a8241f3ebb85c056b509d4327ad0358fbbba6ffb340bf388f26350aeda225b1",
+        type = "tar.gz",
+        urls = ["https://crates.io/api/v1/crates/beef/0.5.2/download"],
+        strip_prefix = "beef-0.5.2",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.beef-0.5.2.bazel"),
     )
 
     maybe(
@@ -1381,6 +1392,16 @@ def crate_repositories():
 
     maybe(
         http_archive,
+        name = "crates_vendor__itertools-0.11.0",
+        sha256 = "b1c173a5686ce8bfa551b3563d0c2170bf24ca44da99c7ca4bfdab5418c3fe57",
+        type = "tar.gz",
+        urls = ["https://crates.io/api/v1/crates/itertools/0.11.0/download"],
+        strip_prefix = "itertools-0.11.0",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.itertools-0.11.0.bazel"),
+    )
+
+    maybe(
+        http_archive,
         name = "crates_vendor__itoa-1.0.9",
         sha256 = "af150ab688ff2122fcef229be89cb50dd66af9e01a4ff320cc137eecc9bacc38",
         type = "tar.gz",
@@ -1477,6 +1498,36 @@ def crate_repositories():
         urls = ["https://crates.io/api/v1/crates/log/0.4.20/download"],
         strip_prefix = "log-0.4.20",
         build_file = Label("@patch-labs//third-party/crates:BUILD.log-0.4.20.bazel"),
+    )
+
+    maybe(
+        http_archive,
+        name = "crates_vendor__logos-0.13.0",
+        sha256 = "c000ca4d908ff18ac99b93a062cb8958d331c3220719c52e77cb19cc6ac5d2c1",
+        type = "tar.gz",
+        urls = ["https://crates.io/api/v1/crates/logos/0.13.0/download"],
+        strip_prefix = "logos-0.13.0",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.logos-0.13.0.bazel"),
+    )
+
+    maybe(
+        http_archive,
+        name = "crates_vendor__logos-codegen-0.13.0",
+        sha256 = "dc487311295e0002e452025d6b580b77bb17286de87b57138f3b5db711cded68",
+        type = "tar.gz",
+        urls = ["https://crates.io/api/v1/crates/logos-codegen/0.13.0/download"],
+        strip_prefix = "logos-codegen-0.13.0",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.logos-codegen-0.13.0.bazel"),
+    )
+
+    maybe(
+        http_archive,
+        name = "crates_vendor__logos-derive-0.13.0",
+        sha256 = "dbfc0d229f1f42d790440136d941afd806bc9e949e2bcb8faa813b0f00d1267e",
+        type = "tar.gz",
+        urls = ["https://crates.io/api/v1/crates/logos-derive/0.13.0/download"],
+        strip_prefix = "logos-derive-0.13.0",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.logos-derive-0.13.0.bazel"),
     )
 
     maybe(
@@ -1821,12 +1872,12 @@ def crate_repositories():
 
     maybe(
         http_archive,
-        name = "crates_vendor__prettyplease-0.1.25",
-        sha256 = "6c8646e95016a7a6c4adea95bafa8a16baab64b583356217f2c85db4a39d9a86",
+        name = "crates_vendor__prettyplease-0.2.15",
+        sha256 = "ae005bd773ab59b4725093fd7df83fd7892f7d8eafb48dbd7de6e024e4215f9d",
         type = "tar.gz",
-        urls = ["https://crates.io/api/v1/crates/prettyplease/0.1.25/download"],
-        strip_prefix = "prettyplease-0.1.25",
-        build_file = Label("@patch-labs//third-party/crates:BUILD.prettyplease-0.1.25.bazel"),
+        urls = ["https://crates.io/api/v1/crates/prettyplease/0.2.15/download"],
+        strip_prefix = "prettyplease-0.2.15",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.prettyplease-0.2.15.bazel"),
     )
 
     maybe(
@@ -1841,42 +1892,52 @@ def crate_repositories():
 
     maybe(
         http_archive,
-        name = "crates_vendor__prost-0.11.9",
-        sha256 = "0b82eaa1d779e9a4bc1c3217db8ffbeabaae1dca241bf70183242128d48681cd",
+        name = "crates_vendor__prost-0.12.1",
+        sha256 = "f4fdd22f3b9c31b53c060df4a0613a1c7f062d4115a2b984dd15b1858f7e340d",
         type = "tar.gz",
-        urls = ["https://crates.io/api/v1/crates/prost/0.11.9/download"],
-        strip_prefix = "prost-0.11.9",
-        build_file = Label("@patch-labs//third-party/crates:BUILD.prost-0.11.9.bazel"),
+        urls = ["https://crates.io/api/v1/crates/prost/0.12.1/download"],
+        strip_prefix = "prost-0.12.1",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.prost-0.12.1.bazel"),
     )
 
     maybe(
         http_archive,
-        name = "crates_vendor__prost-build-0.11.9",
-        sha256 = "119533552c9a7ffacc21e099c24a0ac8bb19c2a2a3f363de84cd9b844feab270",
+        name = "crates_vendor__prost-build-0.12.1",
+        sha256 = "8bdf592881d821b83d471f8af290226c8d51402259e9bb5be7f9f8bdebbb11ac",
         type = "tar.gz",
-        urls = ["https://crates.io/api/v1/crates/prost-build/0.11.9/download"],
-        strip_prefix = "prost-build-0.11.9",
-        build_file = Label("@patch-labs//third-party/crates:BUILD.prost-build-0.11.9.bazel"),
+        urls = ["https://crates.io/api/v1/crates/prost-build/0.12.1/download"],
+        strip_prefix = "prost-build-0.12.1",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.prost-build-0.12.1.bazel"),
     )
 
     maybe(
         http_archive,
-        name = "crates_vendor__prost-derive-0.11.9",
-        sha256 = "e5d2d8d10f3c6ded6da8b05b5fb3b8a5082514344d56c9f871412d29b4e075b4",
+        name = "crates_vendor__prost-derive-0.12.1",
+        sha256 = "265baba7fabd416cf5078179f7d2cbeca4ce7a9041111900675ea7c4cb8a4c32",
         type = "tar.gz",
-        urls = ["https://crates.io/api/v1/crates/prost-derive/0.11.9/download"],
-        strip_prefix = "prost-derive-0.11.9",
-        build_file = Label("@patch-labs//third-party/crates:BUILD.prost-derive-0.11.9.bazel"),
+        urls = ["https://crates.io/api/v1/crates/prost-derive/0.12.1/download"],
+        strip_prefix = "prost-derive-0.12.1",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.prost-derive-0.12.1.bazel"),
     )
 
     maybe(
         http_archive,
-        name = "crates_vendor__prost-types-0.11.9",
-        sha256 = "213622a1460818959ac1181aaeb2dc9c7f63df720db7d788b3e24eacd1983e13",
+        name = "crates_vendor__prost-reflect-0.12.0",
+        sha256 = "057237efdb71cf4b3f9396302a3d6599a92fa94063ba537b66130980ea9909f3",
         type = "tar.gz",
-        urls = ["https://crates.io/api/v1/crates/prost-types/0.11.9/download"],
-        strip_prefix = "prost-types-0.11.9",
-        build_file = Label("@patch-labs//third-party/crates:BUILD.prost-types-0.11.9.bazel"),
+        urls = ["https://crates.io/api/v1/crates/prost-reflect/0.12.0/download"],
+        strip_prefix = "prost-reflect-0.12.0",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.prost-reflect-0.12.0.bazel"),
+    )
+
+    maybe(
+        http_archive,
+        name = "crates_vendor__prost-types-0.12.1",
+        sha256 = "e081b29f63d83a4bc75cfc9f3fe424f9156cf92d8a4f0c9407cce9a1b67327cf",
+        type = "tar.gz",
+        urls = ["https://crates.io/api/v1/crates/prost-types/0.12.1/download"],
+        strip_prefix = "prost-types-0.12.1",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.prost-types-0.12.1.bazel"),
     )
 
     maybe(
@@ -1957,6 +2018,16 @@ def crate_repositories():
         urls = ["https://crates.io/api/v1/crates/regex-automata/0.3.8/download"],
         strip_prefix = "regex-automata-0.3.8",
         build_file = Label("@patch-labs//third-party/crates:BUILD.regex-automata-0.3.8.bazel"),
+    )
+
+    maybe(
+        http_archive,
+        name = "crates_vendor__regex-syntax-0.6.29",
+        sha256 = "f162c6dd7b008981e4d40210aca20b4bd0f9b60ca9271061b07f78537722f2e1",
+        type = "tar.gz",
+        urls = ["https://crates.io/api/v1/crates/regex-syntax/0.6.29/download"],
+        strip_prefix = "regex-syntax-0.6.29",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.regex-syntax-0.6.29.bazel"),
     )
 
     maybe(
@@ -2301,42 +2372,42 @@ def crate_repositories():
 
     maybe(
         http_archive,
-        name = "crates_vendor__tonic-0.9.2",
-        sha256 = "3082666a3a6433f7f511c7192923fa1fe07c69332d3c6a2e6bb040b569199d5a",
+        name = "crates_vendor__tonic-0.10.1",
+        sha256 = "14c00bc15e49625f3d2f20b17082601e5e17cf27ead69e805174026c194b6664",
         type = "tar.gz",
-        urls = ["https://crates.io/api/v1/crates/tonic/0.9.2/download"],
-        strip_prefix = "tonic-0.9.2",
-        build_file = Label("@patch-labs//third-party/crates:BUILD.tonic-0.9.2.bazel"),
+        urls = ["https://crates.io/api/v1/crates/tonic/0.10.1/download"],
+        strip_prefix = "tonic-0.10.1",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.tonic-0.10.1.bazel"),
     )
 
     maybe(
         http_archive,
-        name = "crates_vendor__tonic-build-0.9.2",
-        sha256 = "a6fdaae4c2c638bb70fe42803a26fbd6fc6ac8c72f5c59f67ecc2a2dcabf4b07",
+        name = "crates_vendor__tonic-build-0.10.1",
+        sha256 = "c9d37bb15da06ae9bb945963066baca6561b505af93a52e949a85d28558459a2",
         type = "tar.gz",
-        urls = ["https://crates.io/api/v1/crates/tonic-build/0.9.2/download"],
-        strip_prefix = "tonic-build-0.9.2",
-        build_file = Label("@patch-labs//third-party/crates:BUILD.tonic-build-0.9.2.bazel"),
+        urls = ["https://crates.io/api/v1/crates/tonic-build/0.10.1/download"],
+        strip_prefix = "tonic-build-0.10.1",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.tonic-build-0.10.1.bazel"),
     )
 
     maybe(
         http_archive,
-        name = "crates_vendor__tonic-health-0.9.2",
-        sha256 = "080964d45894b90273d2b1dd755fdd114560db8636bb41cea615213c45043c4d",
+        name = "crates_vendor__tonic-health-0.10.1",
+        sha256 = "85e0181bc19dca6407fcd0323b97e9f0867ce3b020be84661a5ade2821360387",
         type = "tar.gz",
-        urls = ["https://crates.io/api/v1/crates/tonic-health/0.9.2/download"],
-        strip_prefix = "tonic-health-0.9.2",
-        build_file = Label("@patch-labs//third-party/crates:BUILD.tonic-health-0.9.2.bazel"),
+        urls = ["https://crates.io/api/v1/crates/tonic-health/0.10.1/download"],
+        strip_prefix = "tonic-health-0.10.1",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.tonic-health-0.10.1.bazel"),
     )
 
     maybe(
         http_archive,
-        name = "crates_vendor__tonic-types-0.9.2",
-        sha256 = "54d564c75583dc072e6a7449f184e0bf1376b0f87b38080eff28c9ca589d4d4c",
+        name = "crates_vendor__tonic-types-0.10.1",
+        sha256 = "a23dcfa74c7aedf87f9e6bc7d422800def75411d0884ec47da8eaeb3efc491e1",
         type = "tar.gz",
-        urls = ["https://crates.io/api/v1/crates/tonic-types/0.9.2/download"],
-        strip_prefix = "tonic-types-0.9.2",
-        build_file = Label("@patch-labs//third-party/crates:BUILD.tonic-types-0.9.2.bazel"),
+        urls = ["https://crates.io/api/v1/crates/tonic-types/0.10.1/download"],
+        strip_prefix = "tonic-types-0.10.1",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.tonic-types-0.10.1.bazel"),
     )
 
     maybe(

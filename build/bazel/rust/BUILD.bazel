@@ -1,10 +1,11 @@
-load("@rules_rust//rust:defs.bzl", "rust_binary")
+load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_library")
 
 rust_binary(
     name = "proto-gen",
     srcs = ["proto_gen.rs"],
     visibility = ["//protos:__subpackages__"],
     deps = [
+        ":proto-processor",
         "//third-party/crates:argh",
         "//third-party/crates:prost",
         "//third-party/crates:prost-build",
@@ -17,10 +18,32 @@ rust_binary(
     srcs = ["grpc_gen.rs"],
     visibility = ["//protos:__subpackages__"],
     deps = [
+        ":proto-processor",
         "//third-party/crates:argh",
         "//third-party/crates:prost",
         "//third-party/crates:prost-build",
         "//third-party/crates:prost-types",
         "//third-party/crates:tonic-build",
+    ],
+)
+
+rust_library(
+    name = "options-parser",
+    srcs = ["options_parser.rs"],
+    crate_name = "pl_gen_options_parser",
+    deps = [
+        "//third-party/crates:prost-build",
+        "//third-party/crates:prost-reflect",
+    ],
+)
+
+rust_library(
+    name = "proto-processor",
+    srcs = ["proto_processor.rs"],
+    crate_name = "pl_gen_proto_processor",
+    deps = [
+        ":options-parser",
+        "//third-party/crates:prost-build",
+        "//third-party/crates:prost-reflect",
     ],
 )

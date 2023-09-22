@@ -1,6 +1,19 @@
 load("//build/bazel/proto:library.bzl", "pl_proto_library")
+load("//build/bazel/rust:proto.bzl", "pl_rust_proto_library")
 
 package(default_visibility = ["//protos:__subpackages__"])
+
+pl_rust_proto_library(
+    name = "proto",
+    protos = [
+        ":object_proto",
+        ":reference_proto",
+        ":repository_proto",
+    ],
+    deps = [
+        "//rust/api:resource_name",
+    ],
+)
 
 pl_proto_library(
     name = "repository_service_proto",

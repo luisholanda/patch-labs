@@ -1,6 +1,8 @@
 build --host_platform=@rules_nixpkgs//nixpkgs/platforms:host
 build --action_env BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
 build --incompatible_enable_cc_toolchain_resolution
+build --cxxopt='-std=c++14'
+build --host_cxxopt='-std=c++14'
 
 build \
   --@rules_rust//:extra_rustc_flag='-Dfuture-incompatible' \
@@ -38,6 +40,7 @@ build:ra --aspects=@rules_rust//rust:defs.bzl%rust_clippy_aspect
 build:ra --output_groups=+clippy_checks
 build:ra --noshow_progress
 build:ra --ui_event_filters=-INFO
+build:ra --keep_going
 
 test --aspects=@rules_rust//rust:defs.bzl%rust_clippy_aspect
 test --output_groups=+clippy_checks

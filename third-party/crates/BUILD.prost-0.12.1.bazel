@@ -6,7 +6,7 @@
 #     bazel run @//third-party:crates_vendor
 ###############################################################################
 
-load("@rules_rust//rust:defs.bzl", "rust_proc_macro")
+load("@rules_rust//rust:defs.bzl", "rust_library")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -14,8 +14,8 @@ package(default_visibility = ["//visibility:public"])
 #     "TODO",  # Apache-2.0
 # ])
 
-rust_proc_macro(
-    name = "prost_derive",
+rust_library(
+    name = "prost",
     srcs = glob(["**/*.rs"]),
     compile_data = glob(
         include = ["**"],
@@ -28,12 +28,20 @@ rust_proc_macro(
             "WORKSPACE.bazel",
         ],
     ),
+    crate_features = [
+        "default",
+        "prost-derive",
+        "std",
+    ],
     crate_root = "src/lib.rs",
     edition = "2021",
+    proc_macro_deps = [
+        "@crates_vendor__prost-derive-0.12.1//:prost_derive",
+    ],
     rustc_flags = ["--cap-lints=allow"],
     tags = [
         "cargo-bazel",
-        "crate-name=prost-derive",
+        "crate-name=prost",
         "manual",
         "noclippy",
         "norustfmt",
@@ -47,12 +55,8 @@ rust_proc_macro(
         "@rules_rust//rust/platform:x86_64-unknown-linux-gnu": [],
         "//conditions:default": ["@platforms//:incompatible"],
     }),
-    version = "0.11.9",
+    version = "0.12.1",
     deps = [
-        "@crates_vendor__anyhow-1.0.75//:anyhow",
-        "@crates_vendor__itertools-0.10.5//:itertools",
-        "@crates_vendor__proc-macro2-1.0.67//:proc_macro2",
-        "@crates_vendor__quote-1.0.33//:quote",
-        "@crates_vendor__syn-1.0.109//:syn",
+        "@crates_vendor__bytes-1.5.0//:bytes",
     ],
 )

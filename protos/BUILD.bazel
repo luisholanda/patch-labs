@@ -14,8 +14,5 @@ buf_breaking_test(
         "//protos/google/rpc:status_proto",
         "//protos/grs/v1:repository_proto",
         "//protos/grs/v1:repository_service_proto",
-        "//protos/pl/api:resource_name",
-        "//protos/pl/auth/users/v1:service_proto",
-        "//protos/pl/auth/users/v1:users_proto",
     ],
 )
