@@ -1,7 +1,17 @@
 load("//build/bazel/proto:library.bzl", "pl_proto_library")
 load("//build/bazel/rust:proto.bzl", "pl_rust_proto_library")
+load("//build/bazel/rust:grpc.bzl", "pl_rust_grpc_library")
 
 package(default_visibility = ["//protos:__subpackages__"])
+
+pl_rust_grpc_library(
+    name = "grpc",
+    protos = [":repository_service_proto"],
+    deps = [
+        ":proto",
+        "//protos/google/longrunning:grpc",
+    ],
+)
 
 pl_rust_proto_library(
     name = "proto",

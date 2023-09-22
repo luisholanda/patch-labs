@@ -1,4 +1,5 @@
-load("@rules_rust//rust:defs.bzl", "rust_library")
+load("//build/bazel/rust:library.bzl", "pl_rust_library")
+load("@rules_rust//rust:rust_common.bzl", "CrateInfo")
 
 def pl_rust_grpc_library(
         name,
@@ -16,9 +17,18 @@ def pl_rust_grpc_library(
     _gen_rust_grpc(
         name = name + "_grpc",
         protos = protos,
+        rust_deps = deps,
     )
 
-    rust_library(
+    # Clippy and Rustfmt will attempt to run on these targets.
+    # This is not correct and likely a bug in target detection.
+    tags = kwargs.pop("tags", [])
+    if "no-clippy" not in tags:
+        tags.append("no-clippy")
+    if "no-rustfmt" not in tags:
+        tags.append("no-rustfmt")
+
+    pl_rust_library(
         name = name,
         srcs = [name + "_grpc"],
         deps = deps + [
@@ -26,7 +36,9 @@ def pl_rust_grpc_library(
             "//third-party/crates:prost-types",
             "//third-party/crates:tonic",
         ],
-        **kwargs,
+        rustc_flags = ["--cap-lints=allow"],
+        tags = tags,
+        **kwargs
     )
 
 def _gen_rust_grpc_impl(ctx):
@@ -34,17 +46,28 @@ def _gen_rust_grpc_impl(ctx):
 
     output_file = ctx.actions.declare_file(ctx.label.name + ".rs")
 
+    transitive_file_descriptor_sets = []
     file_descriptor_sets = []
     for proto in protos:
+        transitive_file_descriptor_sets.append(proto[ProtoInfo].transitive_descriptor_sets)
         file_descriptor_sets.append(proto[ProtoInfo].direct_descriptor_set)
+
+    extern_crates = []
+    for crate in ctx.attr.rust_deps:
+        extern_crates.append(crate[CrateInfo].name)
 
     args = ctx.actions.args()
     args.add(output_file)
-    args.add_all("--file-descriptor-sets", file_descriptor_sets)
+    args.add_all(
+        depset(transitive = transitive_file_descriptor_sets),
+        before_each = "--transitive-file-descriptor-sets",
+    )
+    args.add_all("--direct-file-descriptor-sets", file_descriptor_sets)
+    args.add_all(extern_crates, before_each = "--extern-crates")
 
     ctx.actions.run(
         outputs = [output_file],
-        inputs = file_descriptor_sets,
+        inputs = depset(direct = file_descriptor_sets, transitive = transitive_file_descriptor_sets),
         executable = ctx.executable._grpc_gen,
         arguments = [args],
         mnemonic = "RustProtoGen",
@@ -63,6 +86,9 @@ _gen_rust_grpc = rule(
         "protos": attr.label_list(
             providers = [ProtoInfo],
             doc = "The proto libraries to compile.",
+        ),
+        "rust_deps": attr.label_list(
+            providers = [CrateInfo],
         ),
         "_grpc_gen": attr.label(
             default = "//build/bazel/rust:grpc-gen",

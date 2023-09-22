@@ -43,21 +43,22 @@ impl<'c> OptionsParser<'c> {
                         .as_message()
                         .expect("invalid value for option (google.api.resource)");
                 }
-                "rust_message_options" => {
+                "pl.api.rust_message_options" => {
                     let opt_value = value
                         .as_message()
                         .expect("invalid value for option (pl.api.rust_message_options)");
 
+                    let msg_name = format!(".{}", msg.full_name());
                     if let Some(ext_ty) = opt_value.get_field_by_name("extern_type") {
                         if let Some(ext_ty) = ext_ty.as_str() {
-                            self.config.extern_path(msg.name(), ext_ty);
+                            self.config.extern_path(msg_name.clone(), ext_ty);
                         }
                     }
 
                     if let Some(attribute) = opt_value.get_field_by_name("attribute") {
                         if let Some(attributes) = attribute.as_list() {
                             for attr in attributes.iter().filter_map(|a| a.as_str()) {
-                                self.config.message_attribute(msg.name(), attr);
+                                self.config.message_attribute(msg_name.clone(), attr);
                             }
                         }
                     }
@@ -81,7 +82,7 @@ impl<'c> OptionsParser<'c> {
                         .as_message()
                         .expect("invalid value for option (google.api.resource_reference)");
                 }
-                "rust_field_options" => {
+                "pl.api.rust_field_options" => {
                     let msg = value
                         .as_message()
                         .expect("invalid value for option (pl.api.rust_field_options)");

@@ -43,6 +43,7 @@ rust_library(
     crate_name = "pl_gen_proto_processor",
     deps = [
         ":options-parser",
+        "//third-party/crates:heck",
         "//third-party/crates:prost-build",
         "//third-party/crates:prost-reflect",
     ],

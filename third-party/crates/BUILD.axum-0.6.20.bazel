@@ -62,7 +62,7 @@ rust_library(
         "@crates_vendor__http-body-0.4.5//:http_body",
         "@crates_vendor__hyper-0.14.27//:hyper",
         "@crates_vendor__itoa-1.0.9//:itoa",
-        "@crates_vendor__matchit-0.7.2//:matchit",
+        "@crates_vendor__matchit-0.7.3//:matchit",
         "@crates_vendor__memchr-2.6.3//:memchr",
         "@crates_vendor__mime-0.3.17//:mime",
         "@crates_vendor__percent-encoding-2.3.0//:percent_encoding",

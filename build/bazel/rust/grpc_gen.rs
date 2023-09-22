@@ -15,6 +15,9 @@ struct Args {
     /// descriptor sets of dependencies.
     #[argh(option)]
     transitive_file_descriptor_sets: Vec<PathBuf>,
+    /// extern crate dependencies.
+    #[argh(option)]
+    extern_crates: Vec<String>,
 }
 
 fn main() {
@@ -40,6 +43,7 @@ fn main() {
             direct_file_descriptor_sets: args.direct_file_descriptor_sets,
             transitive_file_descriptor_sets: args.transitive_file_descriptor_sets,
             output_path: args.output_file,
+            extern_crates: args.extern_crates,
         },
     );
 

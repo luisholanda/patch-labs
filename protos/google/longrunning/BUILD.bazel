@@ -1,4 +1,14 @@
 load("//build/bazel/proto:library.bzl", "pl_proto_library")
+load("//build/bazel/rust:grpc.bzl", "pl_rust_grpc_library")
+
+pl_rust_grpc_library(
+    name = "grpc",
+    protos = [":operations_proto"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third-party/crates:tonic-types",
+    ],
+)
 
 pl_proto_library(
     name = "operations_proto",

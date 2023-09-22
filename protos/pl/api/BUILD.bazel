@@ -1,0 +1,10 @@
+load("//build/bazel/proto:library.bzl", "pl_proto_library")
+
+pl_proto_library(
+    name = "rust_proto",
+    srcs = ["rust.proto"],
+    visibility = ["//protos:__subpackages__"],
+    deps = [
+        "@com_google_protobuf//:descriptor_proto",
+    ],
+)

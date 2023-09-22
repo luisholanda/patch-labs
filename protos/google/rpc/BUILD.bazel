@@ -6,6 +6,7 @@ pl_proto_library(
     disable_lint = True,
     visibility = ["//protos:__subpackages__"],
     deps = [
+        "//protos/pl/api:rust_proto",
         "@com_google_protobuf//:any_proto",
     ],
 )

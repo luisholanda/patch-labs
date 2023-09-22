@@ -22,10 +22,12 @@ def pl_rust_library(
         test_proc_macro_deps = [],
         test_compile_data = [],
         test_data = [],
+        tags = [],
         **kwargs):
     rust_library(
         name = name,
         crate_name = pl_crate_name(name),
+        tags = tags,
         **kwargs
     )
 
@@ -37,4 +39,5 @@ def pl_rust_library(
             compile_data = test_compile_data,
             data = test_data,
             proc_macro_deps = test_proc_macro_deps,
+            tags = tags,
         )

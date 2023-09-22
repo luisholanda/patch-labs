@@ -68,6 +68,12 @@ alias(
 )
 
 alias(
+    name = "heck",
+    actual = "@crates_vendor__heck-0.4.1//:heck",
+    tags = ["manual"],
+)
+
+alias(
     name = "http",
     actual = "@crates_vendor__http-0.2.9//:http",
     tags = ["manual"],

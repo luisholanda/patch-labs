@@ -301,6 +301,7 @@ _NORMAL_DEPENDENCIES = {
             "futures-lite": "@crates_vendor__futures-lite-1.13.0//:futures_lite",
             "futures-util": "@crates_vendor__futures-util-0.3.28//:futures_util",
             "glommio": "@crates_vendor__glommio-0.8.0//:glommio",
+            "heck": "@crates_vendor__heck-0.4.1//:heck",
             "http": "@crates_vendor__http-0.2.9//:http",
             "http-body": "@crates_vendor__http-body-0.4.5//:http_body",
             "hyper": "@crates_vendor__hyper-0.14.27//:hyper",
@@ -1532,12 +1533,12 @@ def crate_repositories():
 
     maybe(
         http_archive,
-        name = "crates_vendor__matchit-0.7.2",
-        sha256 = "ed1202b2a6f884ae56f04cff409ab315c5ce26b5e58d7412e484f01fd52f52ef",
+        name = "crates_vendor__matchit-0.7.3",
+        sha256 = "0e7465ac9959cc2b1404e8e2367b43684a6d13790fe23056cc8c6c5a6b7bcb94",
         type = "tar.gz",
-        urls = ["https://crates.io/api/v1/crates/matchit/0.7.2/download"],
-        strip_prefix = "matchit-0.7.2",
-        build_file = Label("@patch-labs//third-party/crates:BUILD.matchit-0.7.2.bazel"),
+        urls = ["https://crates.io/api/v1/crates/matchit/0.7.3/download"],
+        strip_prefix = "matchit-0.7.3",
+        build_file = Label("@patch-labs//third-party/crates:BUILD.matchit-0.7.3.bazel"),
     )
 
     maybe(
